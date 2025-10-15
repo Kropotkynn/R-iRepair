@@ -1,0 +1,274 @@
+{
+  "deviceTypes": [
+    {
+      "id": "smartphone",
+      "name": "Smartphones",
+      "icon": "📱",
+      "description": "Réparation de téléphones portables toutes marques"
+    },
+    {
+      "id": "laptop",
+      "name": "Ordinateurs Portables",
+      "icon": "💻",
+      "description": "Réparation d'ordinateurs portables et ultrabooks"
+    },
+    {
+      "id": "desktop",
+      "name": "Ordinateurs Fixes",
+      "icon": "🖥️",
+      "description": "Réparation d'ordinateurs de bureau"
+    },
+    {
+      "id": "tablet",
+      "name": "Tablettes",
+      "icon": "📱",
+      "description": "Réparation de tablettes tactiles"
+    },
+    {
+      "id": "console",
+      "name": "Consoles de Jeu",
+      "icon": "🎮",
+      "description": "Réparation de consoles de jeux vidéo"
+    }
+  ],
+  "brands": [
+    {
+      "id": "apple-phone",
+      "name": "Apple",
+      "deviceTypeId": "smartphone",
+      "logo": "https://placehold.co/60x60?text=Apple+Logo"
+    },
+    {
+      "id": "samsung-phone",
+      "name": "Samsung",
+      "deviceTypeId": "smartphone",
+      "logo": "https://placehold.co/60x60?text=Samsung+Logo"
+    },
+    {
+      "id": "xiaomi-phone",
+      "name": "Xiaomi",
+      "deviceTypeId": "smartphone",
+      "logo": "https://placehold.co/60x60?text=Xiaomi+Logo"
+    },
+    {
+      "id": "huawei-phone",
+      "name": "Huawei",
+      "deviceTypeId": "smartphone",
+      "logo": "https://placehold.co/60x60?text=Huawei+Logo"
+    },
+    {
+      "id": "google-phone",
+      "name": "Google",
+      "deviceTypeId": "smartphone",
+      "logo": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/980cc3e6-d1f2-4eb9-9f5d-7dd276436ea6.png"
+    },
+    {
+      "id": "apple-laptop",
+      "name": "Apple",
+      "deviceTypeId": "laptop",
+      "logo": "https://placehold.co/60x60?text=Apple+Logo"
+    },
+    {
+      "id": "dell-laptop",
+      "name": "Dell",
+      "deviceTypeId": "laptop",
+      "logo": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5ea1acda-7ec2-4091-ac30-26aff18e0e0e.png"
+    },
+    {
+      "id": "hp-laptop",
+      "name": "HP",
+      "deviceTypeId": "laptop",
+      "logo": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/84440ade-a79b-4f9f-8886-6ff5360b3a42.png"
+    },
+    {
+      "id": "lenovo-laptop",
+      "name": "Lenovo",
+      "deviceTypeId": "laptop",
+      "logo": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/078ac67a-66e9-4406-b586-ac611bddd1a7.png"
+    },
+    {
+      "id": "asus-laptop",
+      "name": "Asus",
+      "deviceTypeId": "laptop",
+      "logo": "https://placehold.co/60x60?text=Asus+Logo"
+    },
+    {
+      "id": "apple-tablet",
+      "name": "Apple",
+      "deviceTypeId": "tablet",
+      "logo": "https://placehold.co/60x60?text=Apple+Logo"
+    },
+    {
+      "id": "samsung-tablet",
+      "name": "Samsung",
+      "deviceTypeId": "tablet",
+      "logo": "https://placehold.co/60x60?text=Samsung+Logo"
+    },
+    {
+      "id": "sony-console",
+      "name": "Sony",
+      "deviceTypeId": "console",
+      "logo": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/8c23a672-c5c3-4184-8e58-5f00f9ac825a.png"
+    },
+    {
+      "id": "microsoft-console",
+      "name": "Microsoft",
+      "deviceTypeId": "console",
+      "logo": "https://placehold.co/60x60?text=Microsoft+Logo"
+    },
+    {
+      "id": "nintendo-console",
+      "name": "Nintendo",
+      "deviceTypeId": "console",
+      "logo": "https://placehold.co/60x60?text=Nintendo+Logo"
+    }
+  ],
+  "models": [
+    {
+      "id": "iphone-15-pro",
+      "name": "iPhone 15 Pro",
+      "brandId": "apple-phone",
+      "image": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/33e6fc1c-ffd0-4927-b580-7997cf1e32ad.png",
+      "estimatedPrice": "80€ - 350€",
+      "repairTime": "1-2h"
+    },
+    {
+      "id": "iphone-14",
+      "name": "iPhone 14",
+      "brandId": "apple-phone",
+      "image": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c8e5ae4d-20f0-416f-9557-170e2c2faa9d.png",
+      "estimatedPrice": "70€ - 320€",
+      "repairTime": "1-2h"
+    },
+    {
+      "id": "iphone-13",
+      "name": "iPhone 13",
+      "brandId": "apple-phone",
+      "image": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/38eb1292-149a-4961-a190-35bd064c50e4.png",
+      "estimatedPrice": "60€ - 280€",
+      "repairTime": "1-2h"
+    },
+    {
+      "id": "galaxy-s24",
+      "name": "Galaxy S24",
+      "brandId": "samsung-phone",
+      "image": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/fae65749-d567-4dbb-91a8-87b9b2188f28.png",
+      "estimatedPrice": "70€ - 300€",
+      "repairTime": "1-2h"
+    },
+    {
+      "id": "galaxy-s23",
+      "name": "Galaxy S23",
+      "brandId": "samsung-phone",
+      "image": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/08a9eb89-de8d-490a-ae73-f2d0f98fe2d3.png",
+      "estimatedPrice": "60€ - 280€",
+      "repairTime": "1-2h"
+    },
+    {
+      "id": "macbook-pro-14",
+      "name": "MacBook Pro 14\"",
+      "brandId": "apple-laptop",
+      "image": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f266591c-c1dc-4e30-a042-decaae4fe8b5.png",
+      "estimatedPrice": "150€ - 800€",
+      "repairTime": "2-5 jours"
+    },
+    {
+      "id": "macbook-air-13",
+      "name": "MacBook Air 13\"",
+      "brandId": "apple-laptop",
+      "image": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5115c0aa-03e9-44c3-86c9-7823693c50f1.png",
+      "estimatedPrice": "120€ - 600€",
+      "repairTime": "1-3 jours"
+    },
+    {
+      "id": "dell-xps-15",
+      "name": "XPS 15",
+      "brandId": "dell-laptop",
+      "image": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/728a2038-a074-46ff-8e3d-a24a85fdb01f.png",
+      "estimatedPrice": "100€ - 500€",
+      "repairTime": "2-4 jours"
+    },
+    {
+      "id": "ipad-pro-12",
+      "name": "iPad Pro 12.9\"",
+      "brandId": "apple-tablet",
+      "image": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/631a91f1-e1db-4f5d-99a6-3495e1f0f873.png",
+      "estimatedPrice": "120€ - 450€",
+      "repairTime": "1-3 jours"
+    },
+    {
+      "id": "ps5",
+      "name": "PlayStation 5",
+      "brandId": "sony-console",
+      "image": "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/982b73ab-ac9a-4c85-bdec-c2e14e0d8b3d.png",
+      "estimatedPrice": "80€ - 300€",
+      "repairTime": "2-5 jours"
+    }
+  ],
+  "repairServices": [
+    {
+      "id": "screen-replacement-phone",
+      "name": "Remplacement d'écran",
+      "description": "Remplacement complet de l'écran tactile",
+      "price": 120,
+      "estimatedTime": "1-2h",
+      "deviceTypeId": "smartphone"
+    },
+    {
+      "id": "battery-replacement-phone",
+      "name": "Remplacement de batterie",
+      "description": "Changement de batterie défaillante",
+      "price": 60,
+      "estimatedTime": "30min",
+      "deviceTypeId": "smartphone"
+    },
+    {
+      "id": "camera-repair-phone",
+      "name": "Réparation caméra",
+      "description": "Réparation ou remplacement du module caméra",
+      "price": 80,
+      "estimatedTime": "1h",
+      "deviceTypeId": "smartphone"
+    },
+    {
+      "id": "charging-port-phone",
+      "name": "Réparation port de charge",
+      "description": "Nettoyage ou remplacement du connecteur",
+      "price": 50,
+      "estimatedTime": "45min",
+      "deviceTypeId": "smartphone"
+    },
+    {
+      "id": "screen-replacement-laptop",
+      "name": "Remplacement d'écran",
+      "description": "Changement de dalle LCD/OLED",
+      "price": 200,
+      "estimatedTime": "2-3 jours",
+      "deviceTypeId": "laptop"
+    },
+    {
+      "id": "keyboard-replacement-laptop",
+      "name": "Remplacement clavier",
+      "description": "Changement clavier AZERTY",
+      "price": 80,
+      "estimatedTime": "1-2 jours",
+      "deviceTypeId": "laptop"
+    },
+    {
+      "id": "battery-replacement-laptop",
+      "name": "Remplacement batterie",
+      "description": "Changement batterie ordinateur portable",
+      "price": 100,
+      "estimatedTime": "1 jour",
+      "deviceTypeId": "laptop"
+    },
+    {
+      "id": "fan-cleaning-laptop",
+      "name": "Nettoyage ventilation",
+      "description": "Nettoyage complet système de refroidissement",
+      "price": 40,
+      "estimatedTime": "1-2h",
+      "deviceTypeId": "laptop"
+    }
+  ]
+}
