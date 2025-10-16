@@ -29,7 +29,7 @@ export default function BookingForm({ prefilledData, onSubmit }: BookingFormProp
     urgency: 'normal',
   });
 
-  const [errors, setErrors] = useState<FormErrors>({});
+   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deviceDetails, setDeviceDetails] = useState<{
     deviceType?: DeviceType;
@@ -37,6 +37,8 @@ export default function BookingForm({ prefilledData, onSubmit }: BookingFormProp
     model?: Model;
     service?: RepairService;
   }>({});
+  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
 
   // Charger les détails des éléments sélectionnés
   useEffect(() => {
@@ -165,17 +167,42 @@ export default function BookingForm({ prefilledData, onSubmit }: BookingFormProp
     }
   };
 
-  // Générer les créneaux horaires disponibles
-  const generateTimeSlots = () => {
-    const slots = [];
-    for (let hour = 9; hour < 18; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        slots.push(timeString);
+   // Charger les créneaux disponibles pour la date sélectionnée
+  useEffect(() => {
+    const loadAvailableSlots = async () => {
+      if (!formData.appointmentDate) {
+        setAvailableSlots([]);
+        return;
       }
+
+      setLoadingSlots(true);
+      try {
+        const response = await fetch(`/api/available-slots?date=${formData.appointmentDate}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data.isOpen) {
+            setAvailableSlots(data.data.availableSlots || []);
+          } else {
+            setAvailableSlots([]);
+          }
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des créneaux:', error);
+        setAvailableSlots([]);
+      } finally {
+        setLoadingSlots(false);
+      }
+    };
+
+    loadAvailableSlots();
+  }, [formData.appointmentDate]);
+
+  // Réinitialiser l'heure si elle n'est plus disponible
+  useEffect(() => {
+    if (formData.appointmentTime && !availableSlots.includes(formData.appointmentTime)) {
+      setFormData(prev => ({ ...prev, appointmentTime: '' }));
     }
-    return slots;
-  };
+  }, [availableSlots, formData.appointmentTime]);
 
   // Date minimum (aujourd'hui)
   const getMinDate = () => {
@@ -325,21 +352,37 @@ export default function BookingForm({ prefilledData, onSubmit }: BookingFormProp
               <label htmlFor="appointmentTime" className="block text-sm font-medium text-gray-700 mb-2">
                 Heure souhaitée *
               </label>
-              <select
+               <select
                 id="appointmentTime"
                 value={formData.appointmentTime}
                 onChange={(e) => handleInputChange('appointmentTime', e.target.value)}
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
                   errors.appointmentTime ? 'border-red-300' : 'border-gray-300'
                 }`}
+                disabled={!formData.appointmentDate || loadingSlots}
               >
-                <option value="">Sélectionnez une heure</option>
-                {generateTimeSlots().map(time => (
-                  <option key={time} value={time}>{time}</option>
-                ))}
+                {!formData.appointmentDate ? (
+                  <option value="">Sélectionnez d'abord une date</option>
+                ) : loadingSlots ? (
+                  <option value="">Chargement des créneaux...</option>
+                ) : availableSlots.length > 0 ? (
+                  <>
+                    <option value="">Sélectionnez une heure</option>
+                    {availableSlots.map(time => (
+                      <option key={time} value={time}>{time}</option>
+                    ))}
+                  </>
+                ) : (
+                  <option value="">Aucun créneau disponible ce jour</option>
+                )}
               </select>
-              {errors.appointmentTime && (
+               {errors.appointmentTime && (
                 <p className="mt-1 text-sm text-red-600">{errors.appointmentTime}</p>
+              )}
+              {formData.appointmentDate && availableSlots.length === 0 && !loadingSlots && (
+                <p className="mt-1 text-sm text-orange-600">
+                  ⚠️ Aucun créneau disponible ce jour. Essayez une autre date.
+                </p>
               )}
             </div>
           </div>

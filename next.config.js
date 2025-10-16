@@ -17,6 +17,15 @@ const nextConfig = {
       },
     ],
   },
+  
+  // Exclure les dossiers backend du build Next.js
+  webpack: (config) => {
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: ['**/backend/**', '**/database/**', '**/deploy/**']
+    };
+    return config;
+  },
 }
 
 module.exports = nextConfig

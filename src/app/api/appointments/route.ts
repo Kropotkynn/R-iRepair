@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { Appointment } from '@/types';
+import { Appointment, Schedule } from '@/types';
 import { generateId } from '@/lib/utils';
+import { isSlotAvailable } from '@/lib/schedule';
 
 export const dynamic = 'force-dynamic';
 
-// Chemin vers le fichier de stockage des rendez-vous
+// Chemins vers les fichiers de stockage
 const appointmentsFilePath = path.join(process.cwd(), 'src/data/appointments.json');
+const scheduleFilePath = path.join(process.cwd(), 'src/data/schedule.json');
 
 // Initialiser le fichier s'il n'existe pas
 async function initializeAppointmentsFile() {
@@ -37,6 +39,29 @@ async function writeAppointments(appointments: Appointment[]): Promise<void> {
   } catch (error) {
     console.error('Error writing appointments:', error);
     throw error;
+  }
+}
+
+// Lire le planning
+async function readSchedule(): Promise<Schedule> {
+  try {
+    await fs.access(scheduleFilePath);
+    const data = await fs.readFile(scheduleFilePath, 'utf-8');
+    return JSON.parse(data);
+  } catch (error) {
+    // Planning par défaut si le fichier n'existe pas
+    return {
+      defaultSlots: [{
+        id: 'default',
+        dayOfWeek: 1,
+        startTime: '09:00',
+        endTime: '18:00',
+        isAvailable: true,
+        slotDuration: 30,
+        breakTime: 0
+      }],
+      exceptions: []
+    };
   }
 }
 
@@ -133,19 +158,23 @@ export async function POST(request: Request) {
       newAppointment.notes = 'Réparation urgente demandée (+20€)';
     }
 
-    // Lire les rendez-vous existants
+     // Lire les rendez-vous existants et le planning
     const appointments = await readAppointments();
+    const schedule = await readSchedule();
     
-    // Vérifier les conflits d'horaire (optionnel - on peut accepter plusieurs RDV au même créneau)
-    const conflictingAppointment = appointments.find(
-      apt => apt.appointmentDate === body.appointmentDate && 
-             apt.appointmentTime === body.appointmentTime &&
-             apt.status !== 'cancelled'
+    // Vérifier la disponibilité du créneau
+    const bookedAppointments = appointments.filter(apt => 
+      apt.appointmentDate === body.appointmentDate && apt.status !== 'cancelled'
     );
-
-    if (conflictingAppointment) {
-      // Ajouter une note plutôt que de rejeter
-      newAppointment.notes = (newAppointment.notes || '') + ' [Créneau partagé]';
+    
+    if (!isSlotAvailable(body.appointmentDate, body.appointmentTime, schedule, bookedAppointments)) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Ce créneau n\'est pas disponible. Veuillez choisir un autre horaire.' 
+        },
+        { status: 400 }
+      );
     }
 
     // Ajouter le nouveau rendez-vous

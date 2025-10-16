@@ -1,0 +1,190 @@
+# =====================================================
+# Configuration de Production - R iRepair
+# =====================================================
+
+# ===== Serveur et Infrastructure =====
+server:
+  host: "votre-serveur.com"
+  user: "root"
+  port: 22
+  ssh_key: "~/.ssh/rirepair_server_key"
+
+# ===== Configuration de l'Application =====
+application:
+  name: "rirepair"
+  environment: "production"
+  domain: "rirepair.com"
+  admin_domain: "admin.rirepair.com"
+  
+  # Ports d'écoute
+  ports:
+    frontend: 3000
+    backend: 8000
+    postgres: 5432
+    redis: 6379
+    nginx: 80
+    nginx_ssl: 443
+
+# ===== Base de Données =====
+database:
+  type: "postgresql"
+  host: "localhost"
+  port: 5432
+  name: "rirepair"
+  user: "rirepair_user"
+  password: "CHANGE_THIS_SECURE_PASSWORD"
+  
+  # Configuration de performance
+  max_connections: 100
+  shared_buffers: "256MB"
+  effective_cache_size: "1GB"
+  work_mem: "4MB"
+  
+  # Sauvegarde automatique
+  backup:
+    enabled: true
+    schedule: "0 2 * * *"  # Tous les jours à 2h du matin
+    retention_days: 30
+    s3_bucket: "rirepair-backups"
+
+# ===== Sécurité =====
+security:
+  jwt_secret: "CHANGE_THIS_JWT_SECRET_MINIMUM_32_CHARACTERS"
+  
+  # Firewall
+  firewall:
+    enabled: true
+    allowed_ports: [22, 80, 443]
+    fail2ban: true
+  
+  # SSL/TLS
+  ssl:
+    enabled: true
+    provider: "letsencrypt"  # ou "custom"
+    auto_renewal: true
+  
+  # Rate limiting
+  rate_limit:
+    api:
+      window_ms: 900000  # 15 minutes
+      max_requests: 100
+    public:
+      window_ms: 900000
+      max_requests: 50
+
+# ===== Monitoring =====
+monitoring:
+  enabled: true
+  
+  # Métriques
+  prometheus:
+    enabled: true
+    retention: "15d"
+  
+  grafana:
+    enabled: true
+    admin_password: "CHANGE_THIS_GRAFANA_PASSWORD"
+  
+  # Logs
+  logging:
+    level: "info"
+    max_file_size: "100MB"
+    max_files: 10
+  
+  # Alertes
+  alerts:
+    email: "admin@rirepair.com"
+    slack_webhook: ""
+    
+    # Seuils d'alerte
+    thresholds:
+      cpu_percent: 80
+      memory_percent: 85
+      disk_percent: 90
+      response_time_ms: 2000
+
+# ===== Performance =====
+performance:
+  # Cache
+  redis:
+    enabled: true
+    max_memory: "512mb"
+    eviction_policy: "allkeys-lru"
+  
+  # CDN (optionnel)
+  cdn:
+    enabled: false
+    provider: "cloudflare"
+    zone_id: ""
+  
+  # Optimisations
+  compression: true
+  image_optimization: true
+  
+# ===== Backup et Récupération =====
+backup:
+  strategy: "full_daily_incremental_hourly"
+  
+  local:
+    enabled: true
+    path: "/backup/rirepair"
+    retention_days: 7
+  
+  remote:
+    enabled: true
+    provider: "s3"
+    bucket: "rirepair-backups"
+    region: "eu-west-1"
+    
+  # Test de récupération automatique
+  recovery_test:
+    enabled: true
+    schedule: "0 4 * * 0"  # Dimanche à 4h
+
+# ===== Mise à l'Échelle =====
+scaling:
+  # Auto-scaling basique
+  auto_scale:
+    enabled: false
+    min_instances: 1
+    max_instances: 3
+    target_cpu: 70
+  
+  # Load balancing
+  load_balancer:
+    enabled: false
+    algorithm: "round_robin"
+    health_check: "/api/health"
+    
+# ===== Maintenance =====
+maintenance:
+  # Page de maintenance
+  page:
+    enabled: false
+    message: "Site en maintenance, retour dans quelques minutes"
+    
+  # Fenêtre de maintenance
+  window:
+    start: "02:00"
+    end: "04:00"
+    timezone: "Europe/Paris"
+  
+  # Mises à jour automatiques
+  auto_updates:
+    enabled: false
+    schedule: "0 3 * * 1"  # Lundi à 3h
+    
+# ===== Notifications =====
+notifications:
+  deployment:
+    slack: false
+    email: true
+    recipients: ["admin@rirepair.com"]
+  
+  errors:
+    enabled: true
+    threshold: 5  # Alerter après 5 erreurs en 10 minutes
+    
+  performance:
+    enabled: true
+    response_time_threshold: 3000  # ms
