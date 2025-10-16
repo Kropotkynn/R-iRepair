@@ -127,3 +127,63 @@ export interface SelectionState {
 export interface FormErrors {
   [key: string]: string;
 }
+
+// Types pour les disponibilités et emploi du temps
+export interface TimeSlot {
+  id: string;
+  dayOfWeek: number; // 0 = Dimanche, 1 = Lundi, etc.
+  startTime: string; // Format "HH:mm"
+  endTime: string; // Format "HH:mm"
+  isAvailable: boolean;
+  slotDuration: number; // Durée en minutes
+  breakTime: number; // Pause entre créneaux en minutes
+}
+
+export interface ScheduleException {
+  id: string;
+  date: string; // Format "YYYY-MM-DD"
+  isAvailable: boolean;
+  reason?: string; // Ex: "Congés", "Formation", etc.
+  customSlots?: TimeSlot[]; // Créneaux spéciaux pour cette date
+}
+
+export interface Schedule {
+  defaultSlots: TimeSlot[];
+  exceptions: ScheduleException[];
+}
+
+// Type pour les événements du calendrier
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  date: string; // Format "YYYY-MM-DD"
+  time: string; // Format "HH:mm"
+  type: 'appointment' | 'blocked' | 'exception';
+  appointment?: Appointment;
+  duration?: number; // en minutes
+  color?: string;
+}
+
+// Types pour les modals d'administration
+export interface CategoryFormData {
+  name: string;
+  icon?: string;
+  description?: string;
+  deviceTypeId?: string;
+  brandId?: string;
+  logo?: string;
+  image?: string;
+  estimatedPrice?: string;
+  repairTime?: string;
+  price?: number;
+  estimatedTime?: string;
+}
+
+export interface ScheduleFormData {
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+  isAvailable: boolean;
+  slotDuration: number;
+  breakTime: number;
+}

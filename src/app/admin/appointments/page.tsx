@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Appointment } from '@/types';
 import { AdminProvider, useRequireAuth, useAdmin } from '@/context/AdminContext';
 import { formatDate, formatDateTime, getStatusColor, getStatusText } from '@/lib/utils';
+import { ConfirmModal, Toast } from '@/components/ui/modal';
 
 function AppointmentsContent() {
   const { isAuthenticated, loading, user } = useRequireAuth();
@@ -18,6 +19,16 @@ function AppointmentsContent() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  
+  // États pour les modals et messages
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [appointmentToDelete, setAppointmentToDelete] = useState<Appointment | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: 'success' | 'error' | 'warning' | 'info';
+  }>({ show: false, message: '', type: 'success' });
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -43,7 +54,7 @@ function AppointmentsContent() {
     }
   };
 
-  const handleStatusChange = async (appointmentId: string, newStatus: string) => {
+   const handleStatusChange = async (appointmentId: string, newStatus: string) => {
     try {
       const response = await fetch(`/api/appointments/${appointmentId}`, {
         method: 'PUT',
@@ -53,37 +64,64 @@ function AppointmentsContent() {
         body: JSON.stringify({ status: newStatus }),
       });
 
+      const result = await response.json();
+
       if (response.ok) {
-        // Recharger les rendez-vous
+        showToast('Statut mis à jour avec succès', 'success');
         await loadAppointments();
       } else {
-        alert('Erreur lors de la mise à jour du statut');
+        showToast(result.error || 'Erreur lors de la mise à jour du statut', 'error');
       }
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error);
-      alert('Erreur lors de la mise à jour du statut');
+      showToast('Erreur de connexion lors de la mise à jour', 'error');
     }
   };
 
-  const handleDeleteAppointment = async (appointmentId: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?')) {
-      return;
-    }
+   const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
+    setToast({ show: true, message, type });
+  };
 
+  const hideToast = () => {
+    setToast(prev => ({ ...prev, show: false }));
+  };
+
+  const handleDeleteClick = (appointment: Appointment) => {
+    setAppointmentToDelete(appointment);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!appointmentToDelete) return;
+
+    setIsDeleting(true);
+    
     try {
-      const response = await fetch(`/api/appointments/${appointmentId}`, {
+      const response = await fetch(`/api/appointments/${appointmentToDelete.id}`, {
         method: 'DELETE',
       });
 
+      const result = await response.json();
+
       if (response.ok) {
+        showToast('Rendez-vous supprimé avec succès', 'success');
         await loadAppointments();
+        setShowDeleteModal(false);
+        setAppointmentToDelete(null);
       } else {
-        alert('Erreur lors de la suppression');
+        showToast(result.error || 'Erreur lors de la suppression', 'error');
       }
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
-      alert('Erreur lors de la suppression');
+      showToast('Erreur de connexion lors de la suppression', 'error');
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
+    setAppointmentToDelete(null);
   };
 
   const handleLogout = async () => {
@@ -166,11 +204,23 @@ function AppointmentsContent() {
             >
               Rendez-vous
             </Link>
-            <Link 
+              <Link 
               href="/admin/categories"
               className="border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-4 px-1 text-sm font-medium transition-colors duration-300"
             >
               Catégories
+            </Link>
+            <Link 
+              href="/admin/calendar"
+              className="border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-4 px-1 text-sm font-medium transition-colors duration-300"
+            >
+              Calendrier
+            </Link>
+            <Link 
+              href="/admin/calendar"
+              className="border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-4 px-1 text-sm font-medium transition-colors duration-300"
+            >
+              Calendrier
             </Link>
           </div>
         </div>
@@ -291,19 +341,19 @@ function AppointmentsContent() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <button
+                         <button
                           onClick={() => {
                             setSelectedAppointment(appointment);
                             setShowDetailsModal(true);
                           }}
-                          className="text-blue-600 hover:text-blue-900"
+                          className="text-blue-600 hover:text-blue-900 mr-2"
                         >
                           Détails
                         </button>
                         <select
                           value={appointment.status}
                           onChange={(e) => handleStatusChange(appointment.id, e.target.value)}
-                          className="text-xs border border-gray-300 rounded px-2 py-1"
+                          className="text-xs border border-gray-300 rounded px-2 py-1 mr-2"
                         >
                           <option value="pending">En attente</option>
                           <option value="confirmed">Confirmé</option>
@@ -311,6 +361,12 @@ function AppointmentsContent() {
                           <option value="completed">Terminé</option>
                           <option value="cancelled">Annulé</option>
                         </select>
+                        <button
+                          onClick={() => handleDeleteClick(appointment)}
+                          className="text-red-600 hover:text-red-900 text-xs"
+                        >
+                          Supprimer
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -390,21 +446,40 @@ function AppointmentsContent() {
                 >
                   Fermer
                 </button>
-                <button
+                 <button
                   onClick={() => {
-                    if (confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?')) {
-                      handleDeleteAppointment(selectedAppointment.id);
-                      setShowDetailsModal(false);
-                    }
+                    setShowDetailsModal(false);
+                    handleDeleteClick(selectedAppointment);
                   }}
                   className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-300"
                 >
                   Supprimer
                 </button>
               </div>
-            </div>
+             </div>
           </div>
         )}
+
+        {/* Modal de confirmation de suppression */}
+        <ConfirmModal
+          isOpen={showDeleteModal}
+          onClose={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          title="Supprimer le Rendez-vous"
+          message={`Êtes-vous sûr de vouloir supprimer le rendez-vous de ${appointmentToDelete?.customerName || ''} ?`}
+          confirmText="Supprimer"
+          cancelText="Annuler"
+          type="danger"
+          isLoading={isDeleting}
+        />
+
+        {/* Toast notifications */}
+        <Toast
+          isVisible={toast.show}
+          message={toast.message}
+          type={toast.type}
+          onClose={hideToast}
+        />
       </main>
     </div>
   );
