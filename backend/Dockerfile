@@ -13,10 +13,10 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # Copie des fichiers de dépendances
-COPY package.json pnpm-lock.yaml* ./
+COPY package*.json ./
 
-# Installation de pnpm et des dépendances
-RUN corepack enable pnpm && pnpm install --frozen-lockfile
+# Installation des dépendances avec npm
+RUN npm ci --only=production --ignore-scripts
 
 # =====================================================
 # Stage 2: Build de l'application TypeScript
@@ -28,9 +28,15 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Copie de package.json pour le build
+COPY package*.json ./
+
+# Installation de toutes les dépendances (dev incluses pour le build)
+RUN npm ci --ignore-scripts
+
 # Build TypeScript vers JavaScript
 ENV NODE_ENV production
-RUN corepack enable pnpm && pnpm run build
+RUN npm run build
 
 # =====================================================
 # Stage 3: Production runner
