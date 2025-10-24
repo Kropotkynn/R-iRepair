@@ -10,10 +10,10 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Copie des fichiers de dépendances
-COPY package.json pnpm-lock.yaml* ./
+COPY package*.json ./
 
-# Installation de pnpm et des dépendances
-RUN corepack enable pnpm && pnpm install --frozen-lockfile
+# Installation des dépendances avec npm
+RUN npm ci --only=production --ignore-scripts
 
 # =====================================================
 # Stage 2: Build de l'application
@@ -37,8 +37,11 @@ ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
 ENV NEXT_PUBLIC_APP_NAME=${NEXT_PUBLIC_APP_NAME}
 
+# Installation de toutes les dépendances pour le build
+RUN npm ci --ignore-scripts
+
 # Build de l'application Next.js
-RUN corepack enable pnpm && pnpm run build
+RUN npm run build
 
 # =====================================================
 # Stage 3: Production runner
