@@ -11,9 +11,9 @@ services:
     container_name: rirepair-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: rirepair
-      POSTGRES_USER: rirepair_user
-      POSTGRES_PASSWORD: rirepair_secure_password_change_this
+      POSTGRES_DB: ${DB_NAME:-rirepair}
+      POSTGRES_USER: ${DB_USER:-rirepair_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-rirepair_secure_password_change_this}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -34,7 +34,9 @@ services:
     image: redis:7-alpine
     container_name: rirepair-redis
     restart: unless-stopped
-    command: redis-server --appendonly yes --requirepass rirepair_redis_password
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-rirepair_redis_password}
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-rirepair_redis_password}
     volumes:
       - redis_data:/data
     ports:
@@ -42,7 +44,7 @@ services:
     networks:
       - rirepair-network
     healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-rirepair_redis_password}", "ping"]
       interval: 10s
       timeout: 3s
       retries: 5
@@ -61,28 +63,28 @@ services:
       # Base de données
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_USER: rirepair_user
-      DB_PASSWORD: rirepair_secure_password_change_this
-      DB_NAME: rirepair
+      DB_USER: ${DB_USER:-rirepair_user}
+      DB_PASSWORD: ${DB_PASSWORD:-rirepair_secure_password_change_this}
+      DB_NAME: ${DB_NAME:-rirepair}
       DB_SSL: false
       
       # Redis
       REDIS_URL: redis://rirepair-redis:6379
-      REDIS_PASSWORD: rirepair_redis_password
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-rirepair_redis_password}
       
       # JWT
-      JWT_SECRET: your-super-secret-jwt-key-minimum-32-characters-long-change-this
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-minimum-32-characters-long-change-this}
       
       # Frontend
       FRONTEND_URL: http://frontend:3000
       ALLOWED_ORIGINS: http://localhost:3000,http://frontend:3000
       
       # Email (configurez selon vos besoins)
-      SMTP_HOST: smtp.gmail.com
-      SMTP_PORT: 587
-      SMTP_USER: your-email@gmail.com
-      SMTP_PASSWORD: your-app-password
-      SMTP_FROM: noreply@rirepair.com
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-your-email@gmail.com}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-your-app-password}
+      SMTP_FROM: ${SMTP_FROM:-noreply@rirepair.com}
       
       # Monitoring
       LOG_LEVEL: info
@@ -118,12 +120,12 @@ services:
       PORT: 3000
       
       # API Backend
-      NEXT_PUBLIC_API_URL: http://backend:8000/api/v1
-      NEXT_PUBLIC_WS_URL: ws://backend:8000
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://backend:8000/api/v1}
+      NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-ws://backend:8000}
       
       # Application
-      NEXT_PUBLIC_BASE_URL: http://localhost:3000
-      NEXT_PUBLIC_APP_NAME: "R iRepair"
+      NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-http://localhost:3000}
+      NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-R iRepair}
       NEXT_PUBLIC_APP_VERSION: "1.0.0"
       
       # Analytics (optionnel)
