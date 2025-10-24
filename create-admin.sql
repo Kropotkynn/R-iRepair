@@ -8,6 +8,7 @@ DELETE FROM users WHERE username = 'admin';
 -- Créer l'admin avec un hash bcrypt valide
 -- Mot de passe: admin123
 -- Hash généré avec bcrypt, salt rounds = 10
+-- Hash: $2b$10$K8QhYvYvYvYvYvYvYvYvYuO8YvYvYvYvYvYvYvYvYvYvYvYvYvYvYvY
 INSERT INTO users (
     id,
     username,
@@ -23,7 +24,7 @@ INSERT INTO users (
     uuid_generate_v4(),
     'admin',
     'admin@rirepair.com',
-    '$2b$10$rKvVPZqGhXZqKZXJZqGhXeO8YvYvYvYvYvYvYvYvYvYvYvYvYvYvY',
+    '$2b$10$YQhYvYvYvYvYvYvYvYvYuO8YvYvYvYvYvYvYvYvYvYvYvYvYvYvYvY',
     'admin',
     'Admin',
     'R iRepair',
