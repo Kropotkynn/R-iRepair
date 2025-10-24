@@ -31,38 +31,56 @@ EOF
 echo -e "${NC}"
 echo ""
 
-# Étape 1: Arrêter tous les conteneurs R iRepair
-log_info "Étape 1/6: Arrêt de tous les conteneurs R iRepair..."
+# Étape 1: Vérifier et libérer le port 80
+log_info "Étape 1/7: Vérification du port 80..."
+PORT_80_PID=$(sudo lsof -ti:80 2>/dev/null)
+if [ -n "$PORT_80_PID" ]; then
+    log_warning "Port 80 utilisé par le processus $PORT_80_PID"
+    read -p "Voulez-vous arrêter le service utilisant le port 80? (o/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Oo]$ ]]; then
+        sudo kill -9 $PORT_80_PID 2>/dev/null || true
+        log_success "Service arrêté"
+    else
+        log_warning "Le port 80 reste occupé, Nginx ne pourra pas démarrer"
+    fi
+else
+    log_success "Port 80 disponible"
+fi
+echo ""
+
+# Étape 2: Arrêter tous les conteneurs R iRepair
+log_info "Étape 2/7: Arrêt de tous les conteneurs R iRepair..."
 docker stop $(docker ps -a -q --filter "name=rirepair") 2>/dev/null || log_warning "Aucun conteneur à arrêter"
 log_success "Conteneurs arrêtés"
 echo ""
 
-# Étape 2: Supprimer tous les conteneurs R iRepair
-log_info "Étape 2/6: Suppression de tous les conteneurs R iRepair..."
+# Étape 3: Supprimer tous les conteneurs R iRepair
+log_info "Étape 3/7: Suppression de tous les conteneurs R iRepair..."
 docker rm -f $(docker ps -a -q --filter "name=rirepair") 2>/dev/null || log_warning "Aucun conteneur à supprimer"
 log_success "Conteneurs supprimés"
 echo ""
 
-# Étape 3: Supprimer les réseaux
-log_info "Étape 3/6: Nettoyage des réseaux Docker..."
+# Étape 4: Supprimer les réseaux
+log_info "Étape 4/7: Nettoyage des réseaux Docker..."
 docker network prune -f
 log_success "Réseaux nettoyés"
 echo ""
 
-# Étape 4: Pull des dernières modifications
-log_info "Étape 4/6: Récupération des dernières modifications..."
+# Étape 5: Pull des dernières modifications
+log_info "Étape 5/7: Récupération des dernières modifications..."
 git pull origin main
 log_success "Code à jour"
 echo ""
 
-# Étape 5: Build et démarrage
-log_info "Étape 5/6: Build et démarrage des services..."
+# Étape 6: Build et démarrage
+log_info "Étape 6/7: Build et démarrage des services..."
 docker-compose -f docker-compose.simple.yml up -d --build
 log_success "Services démarrés"
 echo ""
 
-# Étape 6: Vérification
-log_info "Étape 6/6: Vérification du déploiement..."
+# Étape 7: Vérification
+log_info "Étape 7/7: Vérification du déploiement..."
 sleep 10
 
 echo ""
