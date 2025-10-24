@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { DeviceType, Brand, Model, RepairService, CategoryFormData, FormErrors } from '@/types';
-import { AdminProvider, useRequireAuth, useAdmin } from '@/context/AdminContext';
+import { AdminProvider, useRequireAuth, useAdmin } from '@/lib/AdminContext';
 
 function CategoriesContent() {
   const { isAuthenticated, loading, user } = useRequireAuth();

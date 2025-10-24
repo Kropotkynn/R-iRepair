@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Appointment, DashboardStats } from '@/types';
-import { AdminProvider, useRequireAuth, useAdmin } from '@/context/AdminContext';
+import { AdminProvider, useRequireAuth, useAdmin } from '@/lib/AdminContext';
 import { formatDate, getStatusColor, getStatusText } from '@/lib/utils';
 
 function DashboardContent() {

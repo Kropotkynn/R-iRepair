@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Appointment } from '@/types';
-import { AdminProvider, useRequireAuth, useAdmin } from '@/context/AdminContext';
+import { AdminProvider, useRequireAuth, useAdmin } from '@/lib/AdminContext';
 import { formatDate, formatDateTime, getStatusColor, getStatusText } from '@/lib/utils';
 import { ConfirmModal, Toast } from '@/components/ui/modal';
 

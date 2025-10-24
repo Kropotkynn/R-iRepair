@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Appointment, Schedule, CalendarEvent, ScheduleFormData } from '@/types';
-import { AdminProvider, useRequireAuth, useAdmin } from '@/context/AdminContext';
+import { AdminProvider, useRequireAuth, useAdmin } from '@/lib/AdminContext';
 import { formatDate } from '@/lib/utils';
 
 function CalendarContent() {

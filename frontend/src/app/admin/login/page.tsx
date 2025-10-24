@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { LoginFormData, FormErrors } from '@/types';
-import { AdminProvider, useAdmin } from '@/context/AdminContext';
+import { AdminProvider, useAdmin } from '@/lib/AdminContext';
 
 function LoginContent() {
   const router = useRouter();
