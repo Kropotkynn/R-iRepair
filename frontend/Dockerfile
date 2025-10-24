@@ -58,12 +58,14 @@ ENV NEXT_TELEMETRY_DISABLED 1
 ENV PORT 3000
 
 # Copie des fichiers de production
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
 
 # Copie du build Next.js optimisé
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Copie du dossier public s'il existe
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # Script de health check
 COPY --chown=nextjs:nodejs <<EOF /app/healthcheck.js
