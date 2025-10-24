@@ -1,0 +1,2 @@
+# Ce fichier permet de garder le dossier public dans Git
+# Next.js standalone mode n'a pas besoin de fichiers publics si l'app n'en utilise pas
