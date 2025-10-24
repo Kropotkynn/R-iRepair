@@ -39,7 +39,7 @@ FROM node:18-alpine AS runner
 # Installation des outils système nécessaires
 RUN apk add --no-cache \
     postgresql-client \
-    redis-tools \
+    redis \
     curl \
     bash \
     tzdata
@@ -163,10 +163,20 @@ fi
 # Test de connexion Redis (optionnel)
 if [ -n "\$REDIS_URL" ]; then
     echo "🔌 Test de connexion Redis..."
-    if redis-cli -u "\$REDIS_URL" ping > /dev/null 2>&1; then
-        echo "✅ Redis disponible"
+    REDIS_HOST=\$(echo \$REDIS_URL | sed 's|redis://||' | cut -d: -f1)
+    REDIS_PORT=\$(echo \$REDIS_URL | sed 's|redis://||' | cut -d: -f2 | cut -d/ -f1)
+    if [ -n "\$REDIS_PASSWORD" ]; then
+        if redis-cli -h \$REDIS_HOST -p \${REDIS_PORT:-6379} -a "\$REDIS_PASSWORD" ping > /dev/null 2>&1; then
+            echo "✅ Redis disponible"
+        else
+            echo "⚠️ Redis indisponible (non critique)"
+        fi
     else
-        echo "⚠️ Redis indisponible (non critique)"
+        if redis-cli -h \$REDIS_HOST -p \${REDIS_PORT:-6379} ping > /dev/null 2>&1; then
+            echo "✅ Redis disponible"
+        else
+            echo "⚠️ Redis indisponible (non critique)"
+        fi
     fi
 fi
 
