@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const offset = (page - 1) * limit;
 
     let sql = `
-      SELECT 
+      SELECT
         a.id,
         a.customer_name,
         a.customer_phone,
@@ -184,9 +184,9 @@ export async function POST(request: NextRequest) {
         device_type_id, brand_id, model_id, repair_service_id,
         device_type_name, brand_name, model_name, repair_service_name,
         description, appointment_date, appointment_time,
-        status, urgency, estimated_price
+        status, urgency, estimated_price, created_at, updated_at
       ) VALUES (
-        \$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13, \$14, \$15, \$16, \$17
+        \$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13, \$14, \$15, \$16, \$17, NOW(), NOW()
       ) RETURNING *`,
       [
         customer_name, customer_phone, customer_email,
