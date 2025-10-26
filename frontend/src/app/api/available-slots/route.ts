@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
         success: true,
         data: {
           isOpen: false,
-          reason: 'Réservation limitée à 7 jours à l'avance',
+          reason: 'Réservation limitée à 7 jours à l\'avance',
           availableSlots: []
         }
       });
