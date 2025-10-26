@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useRequireAuth } from '@/lib/AdminContext';
+import { AdminProvider, useRequireAuth } from '@/lib/AdminContext';
 
 interface PasswordFormData {
   currentPassword: string;
@@ -15,7 +15,7 @@ interface UsernameFormData {
   password: string;
 }
 
-export default function AdminSettingsPage() {
+function AdminSettingsContent() {
   const router = useRouter();
   const { user, loading } = useRequireAuth();
   
@@ -36,17 +36,6 @@ export default function AdminSettingsPage() {
   const [usernameSuccess, setUsernameSuccess] = useState('');
   const [isSubmittingPassword, setIsSubmittingPassword] = useState(false);
   const [isSubmittingUsername, setIsSubmittingUsername] = useState(false);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Chargement...</p>
-        </div>
-      </div>
-    );
-  }
 
   const validatePasswordForm = (): boolean => {
     const errors: Record<string, string> = {};
@@ -167,7 +156,6 @@ export default function AdminSettingsPage() {
           password: '',
         });
         
-        // Déconnecter et rediriger vers login après 2 secondes
         setTimeout(() => {
           window.location.href = '/admin/login';
         }, 2000);
@@ -186,10 +174,20 @@ export default function AdminSettingsPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <p className="mt-4 text-gray-600">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
-        {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => router.push('/admin/dashboard')}
@@ -198,16 +196,11 @@ export default function AdminSettingsPage() {
             ← Retour au tableau de bord
           </button>
           <h1 className="text-3xl font-bold text-gray-900">Paramètres du Compte</h1>
-          <p className="text-gray-600 mt-2">
-            Gérez vos informations de connexion
-          </p>
+          <p className="text-gray-600 mt-2">Gérez vos informations de connexion</p>
         </div>
 
-        {/* Informations actuelles */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Informations Actuelles
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Informations Actuelles</h2>
           <div className="space-y-3">
             <div>
               <span className="text-gray-600">Nom d'utilisateur :</span>
@@ -225,11 +218,8 @@ export default function AdminSettingsPage() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Formulaire de changement de mot de passe */}
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Changer le Mot de Passe
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Changer le Mot de Passe</h2>
             
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
               {passwordErrors.general && (
@@ -315,11 +305,8 @@ export default function AdminSettingsPage() {
             </form>
           </div>
 
-          {/* Formulaire de changement de nom d'utilisateur */}
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Changer le Nom d'Utilisateur
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Changer le Nom d'Utilisateur</h2>
             
             <form onSubmit={handleUsernameSubmit} className="space-y-4">
               {usernameErrors.general && (
@@ -396,5 +383,13 @@ export default function AdminSettingsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminSettingsPage() {
+  return (
+    <AdminProvider>
+      <AdminSettingsContent />
+    </AdminProvider>
   );
 }
