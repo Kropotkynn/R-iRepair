@@ -104,6 +104,12 @@ function DashboardContent() {
               <span className="text-sm text-gray-600">
                 Connecté en tant que <strong>{user?.username}</strong>
               </span>
+              <Link
+                href="/admin/settings"
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
+              >
+                ⚙️ Paramètres
+              </Link>
               <button
                 onClick={handleLogout}
                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
