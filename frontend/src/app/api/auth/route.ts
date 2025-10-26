@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 // Configuration de la connexion PostgreSQL
 const pool = new Pool({
@@ -161,9 +161,10 @@ export async function POST(request: NextRequest) {
         });
 
         // Définir le cookie (7 jours)
+        // Note: secure est désactivé pour permettre HTTP en développement
         response.cookies.set('admin_token', token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: false, // Désactivé pour permettre HTTP
           sameSite: 'lax',
           maxAge: 60 * 60 * 24 * 7, // 7 jours
           path: '/',
