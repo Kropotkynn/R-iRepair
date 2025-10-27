@@ -49,9 +49,34 @@ export async function GET(
       );
     }
 
+    const appointment = result.rows[0];
     return NextResponse.json({
       success: true,
-      data: result.rows[0]
+      data: {
+        id: appointment.id,
+        customerName: appointment.customer_name,
+        customerPhone: appointment.customer_phone,
+        customerEmail: appointment.customer_email,
+        deviceTypeId: appointment.device_type_id,
+        brandId: appointment.brand_id,
+        modelId: appointment.model_id,
+        repairServiceId: appointment.repair_service_id,
+        deviceType: appointment.device_type_name,
+        brand: appointment.brand_name,
+        model: appointment.model_name,
+        repairService: appointment.repair_service_name,
+        description: appointment.description,
+        appointmentDate: appointment.appointment_date,
+        appointmentTime: appointment.appointment_time,
+        status: appointment.status,
+        urgency: appointment.urgency,
+        estimatedPrice: appointment.estimated_price,
+        finalPrice: appointment.final_price,
+        notes: appointment.notes,
+        createdAt: appointment.created_at,
+        updatedAt: appointment.updated_at,
+        completedAt: appointment.completed_at
+      }
     });
   } catch (error: any) {
     console.error('Error fetching appointment:', error);
@@ -131,9 +156,34 @@ export async function PUT(
       );
     }
 
+    const appointment = result.rows[0];
     return NextResponse.json({
       success: true,
-      data: result.rows[0],
+      data: {
+        id: appointment.id,
+        customerName: appointment.customer_name,
+        customerPhone: appointment.customer_phone,
+        customerEmail: appointment.customer_email,
+        deviceTypeId: appointment.device_type_id,
+        brandId: appointment.brand_id,
+        modelId: appointment.model_id,
+        repairServiceId: appointment.repair_service_id,
+        deviceType: appointment.device_type_name,
+        brand: appointment.brand_name,
+        model: appointment.model_name,
+        repairService: appointment.repair_service_name,
+        description: appointment.description,
+        appointmentDate: appointment.appointment_date,
+        appointmentTime: appointment.appointment_time,
+        status: appointment.status,
+        urgency: appointment.urgency,
+        estimatedPrice: appointment.estimated_price,
+        finalPrice: appointment.final_price,
+        notes: appointment.notes,
+        createdAt: appointment.created_at,
+        updatedAt: appointment.updated_at,
+        completedAt: appointment.completed_at
+      },
       message: 'Rendez-vous mis à jour avec succès'
     });
   } catch (error: any) {

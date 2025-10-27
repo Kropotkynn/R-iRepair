@@ -68,6 +68,33 @@ export async function GET(request: NextRequest) {
 
     const result = await query(sql, params);
 
+    // Transformer les données en camelCase
+    const appointments = result.rows.map((row: any) => ({
+      id: row.id,
+      customerName: row.customer_name,
+      customerPhone: row.customer_phone,
+      customerEmail: row.customer_email,
+      deviceTypeId: row.device_type_id,
+      brandId: row.brand_id,
+      modelId: row.model_id,
+      repairServiceId: row.repair_service_id,
+      deviceType: row.device_type_name,
+      brand: row.brand_name,
+      model: row.model_name,
+      repairService: row.repair_service_name,
+      description: row.description,
+      appointmentDate: row.appointment_date,
+      appointmentTime: row.appointment_time,
+      status: row.status,
+      urgency: row.urgency,
+      estimatedPrice: row.estimated_price,
+      finalPrice: row.final_price,
+      notes: row.notes,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      completedAt: row.completed_at
+    }));
+
     // Compter le total
     let countSql = `SELECT COUNT(*) as total FROM appointments a WHERE 1=1`;
     const countParams: any[] = [];
@@ -95,7 +122,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: result.rows,
+      data: appointments,
       pagination: {
         page,
         limit,
@@ -197,9 +224,34 @@ export async function POST(request: NextRequest) {
       ]
     );
 
+    const appointment = result.rows[0];
     return NextResponse.json({
       success: true,
-      data: result.rows[0],
+      data: {
+        id: appointment.id,
+        customerName: appointment.customer_name,
+        customerPhone: appointment.customer_phone,
+        customerEmail: appointment.customer_email,
+        deviceTypeId: appointment.device_type_id,
+        brandId: appointment.brand_id,
+        modelId: appointment.model_id,
+        repairServiceId: appointment.repair_service_id,
+        deviceType: appointment.device_type_name,
+        brand: appointment.brand_name,
+        model: appointment.model_name,
+        repairService: appointment.repair_service_name,
+        description: appointment.description,
+        appointmentDate: appointment.appointment_date,
+        appointmentTime: appointment.appointment_time,
+        status: appointment.status,
+        urgency: appointment.urgency,
+        estimatedPrice: appointment.estimated_price,
+        finalPrice: appointment.final_price,
+        notes: appointment.notes,
+        createdAt: appointment.created_at,
+        updatedAt: appointment.updated_at,
+        completedAt: appointment.completed_at
+      },
       message: 'Rendez-vous créé avec succès'
     }, { status: 201 });
   } catch (error: any) {
