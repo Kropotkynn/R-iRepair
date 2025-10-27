@@ -78,6 +78,9 @@ else
     echo -e "${YELLOW}Création de la table...${NC}"
     
     docker exec rirepair-postgres psql -U rirepair_user -d rirepair << 'EOSQL'
+-- Activer l'extension UUID
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE IF NOT EXISTS schedule_slots (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     day_of_week INTEGER NOT NULL CHECK (day_of_week BETWEEN 0 AND 6),
