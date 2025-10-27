@@ -81,7 +81,11 @@ docker run -d \
   -p 3000:3000 \
   -e NODE_ENV=production \
   -e PORT=3000 \
-  -e DATABASE_URL="postgresql://rirepair_user:rirepair_secure_password_change_this@rirepair-postgres:5432/rirepair" \
+  -e DB_HOST=rirepair-postgres \
+  -e DB_PORT=5432 \
+  -e DB_USER=rirepair_user \
+  -e DB_PASSWORD=rirepair_secure_password_change_this \
+  -e DB_NAME=rirepair \
   -e NEXT_PUBLIC_BASE_URL="http://13.62.55.143:3000" \
   -e NEXT_PUBLIC_APP_NAME="R iRepair" \
   rirepair-frontend:latest
