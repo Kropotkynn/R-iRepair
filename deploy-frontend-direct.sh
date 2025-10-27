@@ -40,22 +40,20 @@ cd frontend
 docker build -t rirepair-frontend:latest .
 cd ..
 
-echo -e "${BLUE}4. Vérification du réseau Docker...${NC}"
-NETWORK_NAME=$(docker network ls --format '{{.Name}}' | grep rirepair | head -1)
-if [ -z "$NETWORK_NAME" ]; then
-    echo -e "${YELLOW}Réseau rirepair non trouvé, utilisation du réseau par défaut${NC}"
-    NETWORK_NAME="bridge"
-fi
-echo -e "${GREEN}✓ Réseau: $NETWORK_NAME${NC}"
+echo -e "${BLUE}4. Vérification du réseau PostgreSQL...${NC}"
+POSTGRES_NETWORK=$(docker inspect rirepair-postgres --format='{{range $net,$v := .NetworkSettings.Networks}}{{$net}}{{end}}')
+echo -e "${GREEN}✓ PostgreSQL est sur le réseau: $POSTGRES_NETWORK${NC}"
 
 echo -e "${BLUE}5. Démarrage du nouveau frontend...${NC}"
 docker run -d \
   --name rirepair-frontend \
-  --network "$NETWORK_NAME" \
+  --network "$POSTGRES_NETWORK" \
   -p 3000:3000 \
   -e DATABASE_URL="postgresql://rirepair_user:rirepair_secure_password_change_this@rirepair-postgres:5432/rirepair" \
   -e NEXT_PUBLIC_API_URL="http://localhost:3000/api" \
   rirepair-frontend:latest
+
+echo -e "${GREEN}✓ Frontend connecté au réseau $POSTGRES_NETWORK${NC}"
 
 echo -e "${YELLOW}Attente du démarrage (30 secondes)...${NC}"
 sleep 30
