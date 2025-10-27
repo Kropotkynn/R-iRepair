@@ -4,11 +4,7 @@ import bcrypt from 'bcryptjs';
 
 // Configuration de la connexion PostgreSQL
 const pool = new Pool({
-  host: process.env.DB_HOST || 'postgres',
-  port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME || 'rirepair',
-  user: process.env.DB_USER || 'rirepair_user',
-  password: process.env.DB_PASSWORD || 'rirepair_secure_password_change_this',
+  connectionString: process.env.DATABASE_URL || 'postgresql://rirepair_user:rirepair_secure_password_change_this@rirepair-postgres:5432/rirepair',
 });
 
 // Interface pour l'utilisateur
