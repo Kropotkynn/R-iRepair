@@ -19,6 +19,7 @@ function CalendarContent() {
   const [loadingData, setLoadingData] = useState(true);
   const [view, setView] = useState<'calendar' | 'schedule'>('calendar');
   const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [editingSlot, setEditingSlot] = useState<any>(null);
   const [scheduleFormData, setScheduleFormData] = useState<ScheduleFormData>({
     dayOfWeek: 1,
     startTime: '09:00',
@@ -108,22 +109,96 @@ function CalendarContent() {
     e.preventDefault();
     
     try {
-      const response = await fetch('/api/admin/schedule', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'timeSlot',
-          data: scheduleFormData
-        }),
+      if (editingSlot) {
+        // Mode édition
+        const response = await fetch('/api/admin/schedule', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: editingSlot.id,
+            ...scheduleFormData
+          }),
+        });
+
+        if (response.ok) {
+          setShowScheduleModal(false);
+          setEditingSlot(null);
+          await loadData();
+          alert('Créneau modifié avec succès !');
+        } else {
+          alert('Erreur lors de la modification du créneau');
+        }
+      } else {
+        // Mode ajout
+        const response = await fetch('/api/admin/schedule', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'timeSlot',
+            data: scheduleFormData
+          }),
+        });
+
+        if (response.ok) {
+          setShowScheduleModal(false);
+          await loadData();
+          alert('Créneau ajouté avec succès !');
+        } else {
+          alert('Erreur lors de l\'ajout du créneau');
+        }
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'opération:', error);
+      alert('Erreur lors de l\'opération');
+    }
+  };
+
+  const handleEditSlot = (slot: any) => {
+    setEditingSlot(slot);
+    setScheduleFormData({
+      dayOfWeek: slot.dayOfWeek,
+      startTime: slot.startTime.substring(0, 5), // Format HH:MM
+      endTime: slot.endTime.substring(0, 5),
+      isAvailable: slot.isAvailable,
+      slotDuration: slot.slotDuration,
+      breakTime: slot.breakTime || 0
+    });
+    setShowScheduleModal(true);
+  };
+
+  const handleDeleteSlot = async (slotId: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce créneau ?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/schedule?id=${slotId}`, {
+        method: 'DELETE',
       });
 
       if (response.ok) {
-        setShowScheduleModal(false);
         await loadData();
+        alert('Créneau supprimé avec succès !');
+      } else {
+        alert('Erreur lors de la suppression du créneau');
       }
     } catch (error) {
-      console.error('Erreur lors de l\'ajout du créneau:', error);
+      console.error('Erreur lors de la suppression:', error);
+      alert('Erreur lors de la suppression');
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowScheduleModal(false);
+    setEditingSlot(null);
+    setScheduleFormData({
+      dayOfWeek: 1,
+      startTime: '09:00',
+      endTime: '18:00',
+      isAvailable: true,
+      slotDuration: 30,
+      breakTime: 0
+    });
   };
 
   if (loading) {
@@ -435,11 +510,17 @@ function CalendarContent() {
                                         </div>
                                       </div>
                                       <div className="flex space-x-1">
-                                        <button className="text-blue-600 hover:text-blue-800 text-xs">
-                                          Modifier
+                                        <button 
+                                          onClick={() => handleEditSlot(slot)}
+                                          className="text-blue-600 hover:text-blue-800 text-xs font-medium"
+                                        >
+                                          ✏️ Modifier
                                         </button>
-                                        <button className="text-red-600 hover:text-red-800 text-xs">
-                                          Supprimer
+                                        <button 
+                                          onClick={() => handleDeleteSlot(slot.id)}
+                                          className="text-red-600 hover:text-red-800 text-xs font-medium"
+                                        >
+                                          🗑️ Supprimer
                                         </button>
                                       </div>
                                     </div>
@@ -499,9 +580,11 @@ function CalendarContent() {
           <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Ajouter un Créneau</h3>
+                <h3 className="text-lg font-medium text-gray-900">
+                  {editingSlot ? 'Modifier le Créneau' : 'Ajouter un Créneau'}
+                </h3>
                 <button
-                  onClick={() => setShowScheduleModal(false)}
+                  onClick={handleCloseModal}
                   className="text-gray-400 hover:text-gray-600"
                 >
                   ✕
@@ -605,7 +688,7 @@ function CalendarContent() {
                 <div className="flex space-x-3 pt-4">
                   <button
                     type="button"
-                    onClick={() => setShowScheduleModal(false)}
+                    onClick={handleCloseModal}
                     className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg font-medium"
                   >
                     Annuler
@@ -614,7 +697,7 @@ function CalendarContent() {
                     type="submit"
                     className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium"
                   >
-                    Ajouter
+                    {editingSlot ? 'Modifier' : 'Ajouter'}
                   </button>
                 </div>
               </form>
