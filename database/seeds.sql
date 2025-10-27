@@ -8,12 +8,13 @@
 
 -- Mot de passe: admin123
 -- Hash bcrypt avec salt rounds = 10
+-- Hash généré et vérifié: $2a$10$t.wtPTON1HHj3wvE2fRWk.O3vrCSjEGpjpqMJ159FQADETc1NNjG.
 INSERT INTO users (id, username, email, password_hash, role, first_name, last_name, is_active)
 VALUES (
     uuid_generate_v4(),
     'admin',
     'admin@rirepair.com',
-    '$2b$10$rKvVPZqGhXZqKZXJZqGhXeO8YvYvYvYvYvYvYvYvYvYvYvYvYvYvY',
+    '$2a$10$t.wtPTON1HHj3wvE2fRWk.O3vrCSjEGpjpqMJ159FQADETc1NNjG.',
     'admin',
     'Admin',
     'R iRepair',
