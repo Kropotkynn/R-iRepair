@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AdminProvider, useRequireAuth } from '@/lib/AdminContext';
 
@@ -37,10 +37,17 @@ function AdminSettingsContent() {
   });
   
   const [emailForm, setEmailForm] = useState<EmailFormData>({
-    currentEmail: user?.email || '',
+    currentEmail: '',
     newEmail: '',
     confirmEmail: '',
   });
+
+  // Mettre à jour l'email actuel quand user est chargé
+  useEffect(() => {
+    if (user?.email && emailForm.currentEmail === '') {
+      setEmailForm(prev => ({ ...prev, currentEmail: user.email }));
+    }
+  }, [user?.email]);
   
   const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>({});
   const [usernameErrors, setUsernameErrors] = useState<Record<string, string>>({});
