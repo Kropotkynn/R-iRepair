@@ -21,6 +21,68 @@ function BookingContent() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [appointmentId, setAppointmentId] = useState<string>('');
 
+  const [deviceDetails, setDeviceDetails] = useState<{
+    deviceType?: { id: string; name: string };
+    brand?: { id: string; name: string };
+    model?: { id: string; name: string };
+    service?: { id: string; name: string; price: number };
+  }>({});
+
+  // Charger les détails des éléments sélectionnés
+  useEffect(() => {
+    const loadDeviceDetails = async () => {
+      try {
+        if (prefilledData.deviceType) {
+          const typesResponse = await fetch('/api/devices/types');
+          if (typesResponse.ok) {
+            const typesData = await typesResponse.json();
+            const deviceType = typesData.data?.find((type: any) => type.id === prefilledData.deviceType);
+            if (deviceType) {
+              setDeviceDetails(prev => ({ ...prev, deviceType }));
+            }
+          }
+        }
+
+        if (prefilledData.brand) {
+          const brandsResponse = await fetch(`/api/devices/brands?deviceType=${prefilledData.deviceType}`);
+          if (brandsResponse.ok) {
+            const brandsData = await brandsResponse.json();
+            const brand = brandsData.data?.find((b: any) => b.id === prefilledData.brand);
+            if (brand) {
+              setDeviceDetails(prev => ({ ...prev, brand }));
+            }
+          }
+        }
+
+        if (prefilledData.model) {
+          const modelsResponse = await fetch(`/api/devices/models?brand=${prefilledData.brand}`);
+          if (modelsResponse.ok) {
+            const modelsData = await modelsResponse.json();
+            const model = modelsData.data?.find((m: any) => m.id === prefilledData.model);
+            if (model) {
+              setDeviceDetails(prev => ({ ...prev, model }));
+            }
+          }
+        }
+
+        if (prefilledData.service) {
+          const servicesResponse = await fetch(`/api/devices/services?deviceType=${prefilledData.deviceType}`);
+          if (servicesResponse.ok) {
+            const servicesData = await servicesResponse.json();
+            const service = servicesData.data?.find((s: any) => s.id === prefilledData.service);
+            if (service) {
+              setDeviceDetails(prev => ({ ...prev, service }));
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des détails:', error);
+      }
+    };
+
+    loadDeviceDetails();
+  }, [prefilledData]);
+
   const handleFormSubmit = async (formData: BookingFormData) => {
     try {
       const response = await fetch('/api/appointments', {
@@ -29,11 +91,22 @@ function BookingContent() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...formData,
-          deviceType: prefilledData.deviceType,
-          brand: prefilledData.brand,
-          model: prefilledData.model,
-          repairService: prefilledData.service,
+          customer_name: formData.customerName,
+          customer_phone: formData.customerPhone,
+          customer_email: formData.customerEmail,
+          device_type_id: prefilledData.deviceType || null,
+          brand_id: prefilledData.brand || null,
+          model_id: prefilledData.model || null,
+          repair_service_id: prefilledData.service || null,
+          device_type_name: deviceDetails.deviceType?.name || 'Non spécifié',
+          brand_name: deviceDetails.brand?.name || 'Non spécifié',
+          model_name: deviceDetails.model?.name || 'Non spécifié',
+          repair_service_name: deviceDetails.service?.name || 'Non spécifié',
+          description: formData.description || '',
+          appointment_date: formData.appointmentDate,
+          appointment_time: formData.appointmentTime,
+          urgency: formData.urgency || 'normal',
+          estimated_price: deviceDetails.service?.price || 0
         }),
       });
 
@@ -43,7 +116,8 @@ function BookingContent() {
         setIsSubmitted(true);
       } else {
         const error = await response.json();
-        throw new Error(error.message || 'Erreur lors de la prise de rendez-vous');
+        console.error('Erreur API:', error);
+        throw new Error(error.error || error.message || 'Erreur lors de la prise de rendez-vous');
       }
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
