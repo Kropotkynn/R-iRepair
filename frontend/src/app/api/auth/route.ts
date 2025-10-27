@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       const client = await pool.connect();
       try {
         const result = await client.query(
-          'SELECT id, username, email, role, first_name, last_name FROM users WHERE id = $1 AND is_active = true',
+          'SELECT id, username, email, role, first_name, last_name FROM users WHERE id = $1',
           [userData.id]
         );
 
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
       try {
         // Récupérer l'utilisateur
         const result = await client.query(
-          'SELECT id, username, email, password_hash, role, first_name, last_name, is_active FROM users WHERE username = $1',
+          'SELECT id, username, email, password_hash, role, first_name, last_name FROM users WHERE username = $1',
           [username]
         );
 
@@ -116,14 +116,6 @@ export async function POST(request: NextRequest) {
         }
 
         const user = result.rows[0];
-
-        // Vérifier si l'utilisateur est actif
-        if (!user.is_active) {
-          return NextResponse.json({
-            success: false,
-            message: 'Compte désactivé',
-          }, { status: 401 });
-        }
 
         // Vérifier le mot de passe
         const passwordMatch = await bcrypt.compare(password, user.password_hash);
