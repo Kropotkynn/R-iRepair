@@ -15,6 +15,12 @@ interface UsernameFormData {
   password: string;
 }
 
+interface EmailFormData {
+  currentEmail: string;
+  newEmail: string;
+  confirmEmail: string;
+}
+
 function AdminSettingsContent() {
   const router = useRouter();
   const { user, loading } = useRequireAuth();
@@ -30,12 +36,21 @@ function AdminSettingsContent() {
     password: '',
   });
   
+  const [emailForm, setEmailForm] = useState<EmailFormData>({
+    currentEmail: user?.email || '',
+    newEmail: '',
+    confirmEmail: '',
+  });
+  
   const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>({});
   const [usernameErrors, setUsernameErrors] = useState<Record<string, string>>({});
+  const [emailErrors, setEmailErrors] = useState<Record<string, string>>({});
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [usernameSuccess, setUsernameSuccess] = useState('');
+  const [emailSuccess, setEmailSuccess] = useState('');
   const [isSubmittingPassword, setIsSubmittingPassword] = useState(false);
   const [isSubmittingUsername, setIsSubmittingUsername] = useState(false);
+  const [isSubmittingEmail, setIsSubmittingEmail] = useState(false);
 
   const validatePasswordForm = (): boolean => {
     const errors: Record<string, string> = {};
@@ -74,6 +89,30 @@ function AdminSettingsContent() {
     }
 
     setUsernameErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const validateEmailForm = (): boolean => {
+    const errors: Record<string, string> = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailForm.currentEmail) {
+      errors.currentEmail = 'L\'email actuel est requis';
+    }
+
+    if (!emailForm.newEmail) {
+      errors.newEmail = 'Le nouvel email est requis';
+    } else if (!emailRegex.test(emailForm.newEmail)) {
+      errors.newEmail = 'Format d\'email invalide';
+    }
+
+    if (!emailForm.confirmEmail) {
+      errors.confirmEmail = 'Veuillez confirmer l\'email';
+    } else if (emailForm.newEmail !== emailForm.confirmEmail) {
+      errors.confirmEmail = 'Les emails ne correspondent pas';
+    }
+
+    setEmailErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
@@ -174,6 +213,53 @@ function AdminSettingsContent() {
     }
   };
 
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateEmailForm()) {
+      return;
+    }
+
+    setIsSubmittingEmail(true);
+    setEmailErrors({});
+    setEmailSuccess('');
+
+    try {
+      const response = await fetch('/api/admin/change-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          currentEmail: emailForm.currentEmail,
+          newEmail: emailForm.newEmail,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setEmailSuccess('Email modifié avec succès !');
+        setEmailForm({
+          currentEmail: emailForm.newEmail,
+          newEmail: '',
+          confirmEmail: '',
+        });
+      } else {
+        setEmailErrors({
+          general: data.error || 'Erreur lors de la modification de l\'email',
+        });
+      }
+    } catch (error) {
+      console.error('Error changing email:', error);
+      setEmailErrors({
+        general: 'Erreur de connexion. Veuillez réessayer.',
+      });
+    } finally {
+      setIsSubmittingEmail(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -218,6 +304,95 @@ function AdminSettingsContent() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Changer l'Email</h2>
+            
+            <form onSubmit={handleEmailSubmit} className="space-y-4">
+              {emailErrors.general && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-red-800 text-sm">{emailErrors.general}</p>
+                </div>
+              )}
+
+              {emailSuccess && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <p className="text-green-800 text-sm">{emailSuccess}</p>
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="currentEmail" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email actuel
+                </label>
+                <input
+                  type="email"
+                  id="currentEmail"
+                  value={emailForm.currentEmail}
+                  onChange={(e) => setEmailForm({ ...emailForm, currentEmail: e.target.value })}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                    emailErrors.currentEmail ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  }`}
+                  disabled={isSubmittingEmail}
+                />
+                {emailErrors.currentEmail && (
+                  <p className="mt-1 text-sm text-red-600">{emailErrors.currentEmail}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="newEmail" className="block text-sm font-medium text-gray-700 mb-2">
+                  Nouvel email
+                </label>
+                <input
+                  type="email"
+                  id="newEmail"
+                  value={emailForm.newEmail}
+                  onChange={(e) => setEmailForm({ ...emailForm, newEmail: e.target.value })}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                    emailErrors.newEmail ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  }`}
+                  disabled={isSubmittingEmail}
+                  placeholder="nouveau@email.com"
+                />
+                {emailErrors.newEmail && (
+                  <p className="mt-1 text-sm text-red-600">{emailErrors.newEmail}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="confirmEmail" className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirmer le nouvel email
+                </label>
+                <input
+                  type="email"
+                  id="confirmEmail"
+                  value={emailForm.confirmEmail}
+                  onChange={(e) => setEmailForm({ ...emailForm, confirmEmail: e.target.value })}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                    emailErrors.confirmEmail ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  }`}
+                  disabled={isSubmittingEmail}
+                  placeholder="nouveau@email.com"
+                />
+                {emailErrors.confirmEmail && (
+                  <p className="mt-1 text-sm text-red-600">{emailErrors.confirmEmail}</p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmittingEmail}
+                className={`w-full py-3 px-6 rounded-lg font-semibold transition-all ${
+                  isSubmittingEmail
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-green-600 hover:bg-green-700 hover:scale-105 shadow-lg hover:shadow-xl'
+                } text-white`}
+              >
+                {isSubmittingEmail ? 'Modification...' : 'Changer l\'email'}
+              </button>
+            </form>
+          </div>
+
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Changer le Mot de Passe</h2>
             
