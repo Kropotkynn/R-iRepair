@@ -40,19 +40,27 @@ cd frontend
 docker build -t rirepair-frontend:latest .
 cd ..
 
-echo -e "${BLUE}4. Démarrage du nouveau frontend...${NC}"
+echo -e "${BLUE}4. Vérification du réseau Docker...${NC}"
+NETWORK_NAME=$(docker network ls --format '{{.Name}}' | grep rirepair | head -1)
+if [ -z "$NETWORK_NAME" ]; then
+    echo -e "${YELLOW}Réseau rirepair non trouvé, utilisation du réseau par défaut${NC}"
+    NETWORK_NAME="bridge"
+fi
+echo -e "${GREEN}✓ Réseau: $NETWORK_NAME${NC}"
+
+echo -e "${BLUE}5. Démarrage du nouveau frontend...${NC}"
 docker run -d \
   --name rirepair-frontend \
-  --network rirepair_rirepair-network \
+  --network "$NETWORK_NAME" \
   -p 3000:3000 \
-  -e DATABASE_URL="postgresql://rirepair_user:rirepair_secure_password_change_this@postgres:5432/rirepair" \
+  -e DATABASE_URL="postgresql://rirepair_user:rirepair_secure_password_change_this@rirepair-postgres:5432/rirepair" \
   -e NEXT_PUBLIC_API_URL="http://localhost:3000/api" \
   rirepair-frontend:latest
 
 echo -e "${YELLOW}Attente du démarrage (30 secondes)...${NC}"
 sleep 30
 
-echo -e "${BLUE}5. Vérification...${NC}"
+echo -e "${BLUE}6. Vérification...${NC}"
 if curl -s http://localhost:3000 > /dev/null; then
     echo -e "${GREEN}✓ Frontend accessible${NC}"
 else
