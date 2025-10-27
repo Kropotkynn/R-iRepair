@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '@/lib/db';
+import { Pool } from 'pg';
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || 'postgresql://rirepair_user:rirepair_secure_password_change_this@rirepair-postgres:5432/rirepair',
+});
 
 // GET - Récupérer le planning
 export async function GET(request: NextRequest) {
