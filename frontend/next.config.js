@@ -18,15 +18,8 @@ const nextConfig = {
     ],
   },
   
-  // Configuration pour l'architecture séparée
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`,
-      },
-    ];
-  },
+  // PAS de rewrites - Les routes API sont gérées par Next.js directement
+  // Les routes API sont dans src/app/api/
   
   // Configuration pour le serveur
   output: 'standalone',
@@ -37,9 +30,9 @@ const nextConfig = {
   
   // Variables d'environnement publiques
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
-    NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || '',
+    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || '',
+    NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME || 'R iRepair',
   }
 }
 
