@@ -112,13 +112,13 @@ function CategoriesContent() {
         name: item.name || '',
         icon: item.icon || '',
         description: item.description || '',
-        deviceTypeId: item.deviceTypeId || item.device_type_id || '',
-        brandId: item.brandId || item.brand_id || '',
+        deviceTypeId: item.device_type_id || item.deviceTypeId || '',
+        brandId: item.brand_id || item.brandId || '',
         image_url: item.image_url || '',
-        estimatedPrice: item.estimatedPrice || item.estimated_price || '',
-        repairTime: item.repairTime || item.repair_time || '',
+        estimatedPrice: item.estimated_price || item.estimatedPrice || '',
+        repairTime: item.repair_time || item.repairTime || '',
         price: item.price || 0,
-        estimatedTime: item.estimatedTime || item.estimated_time || ''
+        estimatedTime: item.estimated_time || item.estimatedTime || ''
       });
     } else {
       resetForm();

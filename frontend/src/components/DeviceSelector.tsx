@@ -150,7 +150,15 @@ export default function DeviceSelector({
               }`}
             >
               <div className="text-center">
-                <div className="text-4xl mb-3">{deviceType.icon}</div>
+                {deviceType.image_url ? (
+                  <img 
+                    src={deviceType.image_url} 
+                    alt={deviceType.name}
+                    className="w-16 h-16 mx-auto mb-3 object-contain"
+                  />
+                ) : (
+                  <div className="text-4xl mb-3">{deviceType.icon}</div>
+                )}
                 <h3 className="font-semibold text-gray-900 mb-2">{deviceType.name}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">{deviceType.description}</p>
               </div>
@@ -184,9 +192,9 @@ export default function DeviceSelector({
                   }`}
                 >
                   <div className="text-center">
-                    {brand.logo && (
+                    {brand.image_url && (
                       <img 
-                        src={brand.logo} 
+                        src={brand.image_url} 
                         alt={`Logo ${brand.name}`}
                         className="w-12 h-12 mx-auto mb-2 object-contain"
                       />
@@ -225,9 +233,9 @@ export default function DeviceSelector({
                   }`}
                 >
                   <div className="flex flex-col items-center">
-                    {model.image && (
+                    {model.image_url && (
                       <img 
-                        src={model.image} 
+                        src={model.image_url} 
                         alt={`${model.name} device model`}
                         className="w-20 h-24 object-cover rounded-lg mb-3"
                       />
