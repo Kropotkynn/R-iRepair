@@ -100,23 +100,56 @@ export async function PUT(
     const { id } = params;
     const body = await request.json();
 
+    // Mapping camelCase vers snake_case
+    const fieldMapping: { [key: string]: string } = {
+      'customerName': 'customer_name',
+      'customerPhone': 'customer_phone',
+      'customerEmail': 'customer_email',
+      'deviceTypeId': 'device_type_id',
+      'brandId': 'brand_id',
+      'modelId': 'model_id',
+      'repairServiceId': 'repair_service_id',
+      'deviceTypeName': 'device_type_name',
+      'brandName': 'brand_name',
+      'modelName': 'model_name',
+      'repairServiceName': 'repair_service_name',
+      'appointmentDate': 'appointment_date',
+      'appointmentTime': 'appointment_time',
+      'estimatedPrice': 'estimated_price',
+      'finalPrice': 'final_price',
+      // Les champs déjà en snake_case
+      'customer_name': 'customer_name',
+      'customer_phone': 'customer_phone',
+      'customer_email': 'customer_email',
+      'device_type_id': 'device_type_id',
+      'brand_id': 'brand_id',
+      'model_id': 'model_id',
+      'repair_service_id': 'repair_service_id',
+      'device_type_name': 'device_type_name',
+      'brand_name': 'brand_name',
+      'model_name': 'model_name',
+      'repair_service_name': 'repair_service_name',
+      'appointment_date': 'appointment_date',
+      'appointment_time': 'appointment_time',
+      'estimated_price': 'estimated_price',
+      'final_price': 'final_price',
+      'description': 'description',
+      'status': 'status',
+      'urgency': 'urgency',
+      'notes': 'notes'
+    };
+
     // Construire la requête de mise à jour dynamiquement
     const updates: string[] = [];
     const values: any[] = [];
     let paramIndex = 1;
 
-    const allowedFields = [
-      'customer_name', 'customer_phone', 'customer_email',
-      'device_type_id', 'brand_id', 'model_id', 'repair_service_id',
-      'device_type_name', 'brand_name', 'model_name', 'repair_service_name',
-      'description', 'appointment_date', 'appointment_time',
-      'status', 'urgency', 'estimated_price', 'final_price', 'notes'
-    ];
-
-    for (const field of allowedFields) {
-      if (body[field] !== undefined) {
-        updates.push(`${field} = \$${paramIndex}`);
-        values.push(body[field]);
+    // Parcourir tous les champs du body
+    for (const [key, value] of Object.entries(body)) {
+      const dbField = fieldMapping[key];
+      if (dbField && value !== undefined) {
+        updates.push(`${dbField} = \$${paramIndex}`);
+        values.push(value);
         paramIndex++;
       }
     }
