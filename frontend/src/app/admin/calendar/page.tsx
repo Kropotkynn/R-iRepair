@@ -75,15 +75,23 @@ function CalendarContent() {
     const currentDay = new Date(startDate);
 
     for (let i = 0; i < 42; i++) {
-      const dateStr = currentDay.toISOString().split('T')[0];
+      // Utiliser la date locale pour éviter les décalages de fuseau horaire
+      const year = currentDay.getFullYear();
+      const monthNum = String(currentDay.getMonth() + 1).padStart(2, '0');
+      const day = String(currentDay.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${monthNum}-${day}`;
       const appointmentsForDay = appointments.filter(apt => apt.appointmentDate === dateStr);
+      
+      // Calculer isToday avec la date locale
+      const today = new Date();
+      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
       
       days.push({
         date: new Date(currentDay),
         dateStr,
         isCurrentMonth: currentDay.getMonth() === month,
         appointments: appointmentsForDay,
-        isToday: dateStr === new Date().toISOString().split('T')[0]
+        isToday: dateStr === todayStr
       });
 
       currentDay.setDate(currentDay.getDate() + 1);
