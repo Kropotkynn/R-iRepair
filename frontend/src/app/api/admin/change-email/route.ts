@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     try {
       // Vérifier si l'email actuel existe
       const userCheck = await client.query(
-        'SELECT id, email FROM admin_users WHERE email = $1',
+        'SELECT id, email FROM users WHERE email = $1',
         [currentEmail]
       );
 
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
 
       // Vérifier si le nouvel email n'est pas déjà utilisé
       const emailCheck = await client.query(
-        'SELECT id FROM admin_users WHERE email = $1 AND id != $2',
+        'SELECT id FROM users WHERE email = $1 AND id != $2',
         [newEmail, userCheck.rows[0].id]
       );
 
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 
       // Mettre à jour l'email
       const result = await client.query(
-        'UPDATE admin_users SET email = $1, updated_at = NOW() WHERE id = $2 RETURNING id, username, email',
+        'UPDATE users SET email = $1, updated_at = NOW() WHERE id = $2 RETURNING id, username, email',
         [newEmail, userCheck.rows[0].id]
       );
 
