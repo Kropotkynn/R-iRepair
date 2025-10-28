@@ -397,41 +397,73 @@ function CategoriesContent() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {brands.map((brand) => (
-                        <tr key={brand.id}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {brand.logo && (
-                              <img src={brand.logo} alt={brand.name} className="h-8 w-8 object-contain" />
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {brand.name}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {deviceTypes.find(d => d.id === brand.deviceTypeId)?.name || brand.deviceTypeId}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                            {brand.id}
-                          </td>
-                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                            <button 
-                              onClick={() => openModal('edit', 'brand', brand)}
-                              className="text-blue-600 hover:text-blue-900"
-                            >
-                              Modifier
-                            </button>
-                            <button 
-                              onClick={() => handleDelete('brand', brand.id, brand.name)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              Supprimer
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                      {brands.map((brand) => {
+                        const deviceType = deviceTypes.find(d => d.id === brand.deviceTypeId);
+                        return (
+                          <tr key={brand.id} className="hover:bg-gray-50 transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {brand.logo ? (
+                                <img src={brand.logo} alt={brand.name} className="h-10 w-10 object-contain rounded" />
+                              ) : (
+                                <div className="h-10 w-10 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs">
+                                  Logo
+                                </div>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm font-medium text-gray-900">{brand.name}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center space-x-2">
+                                <span className="text-2xl">{deviceType?.icon || '📱'}</span>
+                                <div>
+                                  <div className="text-sm font-medium text-gray-900">
+                                    {deviceType?.name || 'Non défini'}
+                                  </div>
+                                  <div className="text-xs text-gray-500">
+                                    {deviceType?.description || brand.deviceTypeId}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded">
+                                {brand.id.substring(0, 8)}...
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                              <button 
+                                onClick={() => openModal('edit', 'brand', brand)}
+                                className="text-blue-600 hover:text-blue-900 transition-colors"
+                              >
+                                ✏️ Modifier
+                              </button>
+                              <button 
+                                onClick={() => handleDelete('brand', brand.id, brand.name)}
+                                className="text-red-600 hover:text-red-900 transition-colors"
+                              >
+                                🗑️ Supprimer
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
+                
+                {brands.length === 0 && (
+                  <div className="text-center py-12">
+                    <div className="text-gray-400 text-5xl mb-4">📦</div>
+                    <p className="text-gray-500">Aucune marque enregistrée</p>
+                    <button 
+                      onClick={() => openModal('add', 'brand')}
+                      className="mt-4 text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    >
+                      Ajouter la première marque
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
