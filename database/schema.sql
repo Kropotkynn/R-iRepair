@@ -142,12 +142,10 @@ CREATE TABLE schedule_slots (
     is_available BOOLEAN DEFAULT true,
     max_concurrent_appointments INTEGER DEFAULT 1,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
     
-    -- Éviter les chevauchements pour le même jour
-    CONSTRAINT no_overlap_same_day 
-        EXCLUDE USING gist (day_of_week WITH =, tsrange(start_time::text::timestamp, end_time::text::timestamp) WITH &&)
-        WHERE (is_available = true)
+    -- Note: La contrainte EXCLUDE USING gist a été retirée car elle nécessite l'extension btree_gist
+    -- qui n'est pas toujours disponible. La validation des chevauchements sera faite au niveau applicatif.
 );
 
 -- Exceptions au planning (jours fériés, congés, horaires spéciaux)
