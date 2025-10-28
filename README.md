@@ -1,599 +1,231 @@
 # 🔧 R iRepair - Plateforme de Réparation Électronique
 
-## 📱 À Propos
+Application web moderne de gestion de réparations d'appareils électroniques avec interface client et panel d'administration complet.
 
-**R iRepair** est une plateforme web moderne de gestion de réparations d'appareils électroniques. Elle offre une interface intuitive pour les clients et un panel d'administration complet pour les professionnels de la réparation.
+## ✨ Fonctionnalités
 
-### ✨ Fonctionnalités Principales
+### Interface Client
+- 📱 Sélection d'appareils en cascade (Type → Marque → Modèle → Service)
+- 📅 Prise de rendez-vous avec validation temps réel
+- 📄 Pages informatives (À propos, Garanties, FAQ)
+- 📱 Design responsive mobile-first
 
-#### **👥 Interface Client**
-- **Page d'accueil** moderne et responsive (mobile-first)
-- **Sélection d'appareils** en cascade : Type → Marque → Modèle → Service
-- **Prise de rendez-vous** avec validation temps réel des créneaux disponibles
-- **Pages informatives** : À propos, Garanties, FAQ
+### Interface Administrateur
+- 📊 Dashboard avec statistiques en temps réel
+- 📋 Gestion complète des rendez-vous
+- 🗂️ CRUD pour toutes les catégories (types, marques, modèles, services)
+- 📆 Calendrier interactif avec vue mensuelle
+- ⚙️ Gestion des horaires et disponibilités
+- 🔐 Authentification sécurisée
 
-#### **🔧 Interface Administrateur**
-- **Dashboard** avec statistiques en temps réel
-- **Gestion des rendez-vous** : visualisation, modification, suppression
-- **CRUD complet** pour toutes les catégories (types, marques, modèles, services)
-- **Calendrier interactif** avec vue mensuelle des rendez-vous
-- **Gestion des horaires** et disponibilités comme emploi du temps
-- **Authentification sécurisée** avec sessions persistantes
+## 🚀 Déploiement Rapide
 
-#### **⚡ Fonctionnalités Avancées**
-- **Créneaux en temps réel** - Impossible de réserver un horaire occupé
-- **Notifications toast** pour toutes les actions
-- **Modals de confirmation** pour les suppressions
-- **Recherche et filtrage** avancés
-- **Responsive design** optimisé mobile
+### Prérequis
+- Docker & Docker Compose
+- Git
 
-## 🚀 Déploiement sur Serveur Dédié
-
-### **📋 Prérequis Serveur**
-
-**Spécifications minimales :**
-- **OS** : Ubuntu 22.04 LTS (recommandé) ou CentOS 8+
-- **CPU** : 2 cores minimum, 4 cores recommandé
-- **RAM** : 4GB minimum, 8GB recommandé
-- **Storage** : 50GB SSD minimum, 100GB recommandé
-- **Réseau** : Bande passante illimitée
-- **Accès** : Root ou utilisateur sudo
-
-### **🛠️ Étape 1 : Installation des Dépendances**
+### Installation
 
 ```bash
-# 1. Mise à jour du système
-sudo apt update && sudo apt upgrade -y
-
-# 2. Installation de Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-sudo usermod -aG docker $USER
-
-# 3. Installation de Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-
-# 4. Installation des outils utiles
-sudo apt install git curl wget htop nginx certbot python3-certbot-nginx -y
-
-# 5. Redémarrage pour appliquer les groupes
-sudo reboot
-```
-
-### **🔧 Étape 2 : Configuration du Projet**
-
-```bash
-# 1. Clonage du repository
+# 1. Cloner le repository
 git clone https://github.com/Kropotkynn/R-iRepair.git
 cd R-iRepair
 
-# 2. Configuration de l'environnement
-cp .env.example .env.production
+# 2. Configurer l'environnement
+cp .env.example .env
+# Éditez .env et changez les mots de passe
 
-# 3. Édition de la configuration (OBLIGATOIRE)
-nano .env.production
+# 3. Déployer
+chmod +x deploy.sh
+./deploy.sh deploy
 ```
 
-**⚠️ Variables OBLIGATOIRES à modifier :**
+L'application sera accessible à :
+- 🌐 **Site principal** : http://localhost:3000
+- 👤 **Administration** : http://localhost:3000/admin/login
+- 📊 **Base de données** : localhost:5432
 
-```env
-# Sécurité (CHANGEZ ABSOLUMENT)
-DB_PASSWORD=VotreMotDePassePostgreSQLSecurise123!
-JWT_SECRET=votre-cle-jwt-super-secrete-minimum-32-caracteres
-REDIS_PASSWORD=mot-de-passe-redis-securise
+### Identifiants par défaut
+- **Username** : `admin`
+- **Password** : `admin123`
 
-# Domaine (remplacez par le vôtre)
-DOMAIN=votre-domaine.com
-NEXT_PUBLIC_API_URL=https://votre-domaine.com/api/v1
-NEXT_PUBLIC_BASE_URL=https://votre-domaine.com
+⚠️ **Important** : Changez ces identifiants après la première connexion !
 
-# Email pour notifications (optionnel)
-SMTP_HOST=smtp.gmail.com
-SMTP_USER=votre-email@gmail.com
-SMTP_PASSWORD=mot-de-passe-application-gmail
-SMTP_FROM=noreply@votre-domaine.com
-```
-
-### **🚀 Étape 3 : Déploiement Automatisé**
+## 📋 Commandes Disponibles
 
 ```bash
-# 1. Permissions d'exécution
-chmod +x deploy/deploy.sh
-
-# 2. Déploiement complet (première installation)
-./deploy/deploy.sh deploy production
-
-# 3. Vérification du déploiement
-curl http://localhost:8000/api/health    # Backend ✅
-curl http://localhost:3000               # Frontend ✅
-
-# 4. Statut des services
-docker-compose ps
+./deploy.sh deploy    # Déployer l'application
+./deploy.sh stop      # Arrêter tous les services
+./deploy.sh restart   # Redémarrer tous les services
+./deploy.sh logs      # Voir les logs en temps réel
+./deploy.sh status    # Vérifier le statut des services
+./deploy.sh backup    # Créer une sauvegarde de la base
+./deploy.sh clean     # Nettoyer complètement (⚠️ supprime les données)
 ```
 
-### **🔒 Étape 4 : Configuration SSL (Production)**
+## 🏗️ Architecture
 
+### Stack Technique
+- **Frontend** : Next.js 14 (App Router) + TypeScript
+- **Styling** : Tailwind CSS + shadcn/ui
+- **Base de données** : PostgreSQL 15
+- **Containerisation** : Docker + Docker Compose
+
+### Structure
+```
+R-iRepair/
+├── frontend/              # Application Next.js
+│   ├── src/
+│   │   ├── app/          # Pages et API routes
+│   │   ├── components/   # Composants React
+│   │   └── lib/          # Utilitaires et DB
+│   └── Dockerfile
+├── database/             # Schéma et seeds PostgreSQL
+│   ├── schema.sql       # Structure de la base
+│   └── seeds.sql        # Données initiales
+├── docker-compose.production.yml  # Configuration Docker
+├── deploy.sh            # Script de déploiement
+└── .env.example         # Template de configuration
+```
+
+## 🔒 Sécurité
+
+- ✅ Mots de passe hashés avec bcrypt
+- ✅ Sessions sécurisées avec cookies HttpOnly
+- ✅ Validation des données côté client et serveur
+- ✅ Protection contre les injections SQL
+- ✅ CORS configuré
+
+## 📊 Base de Données
+
+### Tables Principales
+- `device_types` - Types d'appareils (Smartphones, Ordinateurs, etc.)
+- `brands` - Marques (Apple, Samsung, Dell, etc.)
+- `models` - Modèles d'appareils
+- `repair_services` - Services de réparation
+- `appointments` - Rendez-vous clients
+- `users` - Utilisateurs administrateurs
+- `schedule_slots` - Créneaux horaires disponibles
+
+## 🔧 Maintenance
+
+### Sauvegarde
 ```bash
-# 1. Certificat SSL automatique Let's Encrypt
-sudo certbot --nginx -d votre-domaine.com -d www.votre-domaine.com
+# Sauvegarde automatique
+./deploy.sh backup
 
-# 2. Renouvellement automatique
-sudo crontab -l | grep -q 'certbot' || (sudo crontab -l; echo "0 12 * * * /usr/bin/certbot renew --quiet") | sudo crontab -
-
-# 3. Configuration du firewall
-sudo ufw enable
-sudo ufw allow ssh
-sudo ufw allow 'Nginx Full'
-
-# 4. Test final HTTPS
-curl https://votre-domaine.com/api/health
-```
-
-### **🔥 Étape 5 : Accès à l'Application**
-
-Après déploiement réussi, votre application sera accessible :
-
-- **🌐 Site principal** : https://votre-domaine.com
-- **👤 Administration** : https://votre-domaine.com/admin/login
-- **🔧 API Backend** : https://votre-domaine.com/api/health
-- **📊 Monitoring** : https://votre-domaine.com:3001 (Grafana, si activé)
-
-**Identifiants par défaut :**
-- **Admin R iRepair** : `admin` / `admin123`
-- **PostgreSQL** : `rirepair_user` / `[votre mot de passe]`
-
-## 📊 Structure de la Base de Données PostgreSQL
-
-### **🗂️ Tables Principales**
-
-#### **📱 device_types - Types d'Appareils**
-```sql
-CREATE TABLE device_types (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255) NOT NULL UNIQUE,          -- Ex: "Smartphones", "Ordinateurs Portables"
-    icon VARCHAR(10) NOT NULL,                  -- Ex: "📱", "💻"
-    description TEXT,                           -- Description du type
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-```
-**Données incluses :** Smartphones, Ordinateurs Portables, Tablettes, Consoles, Montres Connectées
-
-#### **🏢 brands - Marques**
-```sql
-CREATE TABLE brands (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255) NOT NULL,                 -- Ex: "Apple", "Samsung", "Dell"
-    device_type_id UUID REFERENCES device_types(id) ON DELETE CASCADE,
-    logo TEXT,                                  -- URL du logo de la marque
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE(name, device_type_id)               -- Une marque par type d'appareil
-);
-```
-**Index :** Index sur device_type_id pour performance  
-**Contraintes :** Suppression en cascade si le type d'appareil est supprimé
-
-#### **📲 models - Modèles d'Appareils**
-```sql
-CREATE TABLE models (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255) NOT NULL,                 -- Ex: "iPhone 15 Pro", "Galaxy S24"
-    brand_id UUID REFERENCES brands(id) ON DELETE CASCADE,
-    image TEXT,                                 -- URL de l'image du modèle
-    estimated_price VARCHAR(100),              -- Ex: "80€ - 350€"
-    repair_time VARCHAR(100),                  -- Ex: "1-2h", "2-5 jours"
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE(name, brand_id)                     -- Un modèle unique par marque
-);
-```
-**Relations :** Lié à brands → device_types (cascade)  
-**Données :** Prix indicatifs et délais de réparation
-
-#### **🔧 repair_services - Services de Réparation**
-```sql
-CREATE TABLE repair_services (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255) NOT NULL,                 -- Ex: "Remplacement d'écran"
-    description TEXT NOT NULL,                  -- Description détaillée
-    price DECIMAL(10,2) NOT NULL CHECK (price >= 0), -- Prix en euros
-    estimated_time VARCHAR(100) NOT NULL,      -- Ex: "1-2h", "30min"
-    device_type_id UUID REFERENCES device_types(id),
-    is_active BOOLEAN DEFAULT true,            -- Service activé/désactivé
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE(name, device_type_id)              -- Un service par type d'appareil
-);
-```
-**Validation :** Prix positif obligatoire  
-**Exemples :** Écran (120€), Batterie (60€), Caméra (80€), Port de charge (50€)
-
-### **👥 Tables Utilisateurs et Sécurité**
-
-#### **👤 users - Utilisateurs Administrateurs**
-```sql
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    username VARCHAR(50) NOT NULL UNIQUE,      -- Nom d'utilisateur unique
-    email VARCHAR(255) NOT NULL UNIQUE,        -- Email unique
-    password_hash VARCHAR(255) NOT NULL,       -- Hash bcrypt du mot de passe
-    role VARCHAR(20) DEFAULT 'admin' CHECK (role IN ('admin', 'technician', 'manager')),
-    first_name VARCHAR(100),                   -- Prénom
-    last_name VARCHAR(100),                    -- Nom
-    phone VARCHAR(20),                         -- Téléphone
-    is_active BOOLEAN DEFAULT true,            -- Compte actif
-    last_login TIMESTAMP,                      -- Dernière connexion
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-```
-**Sécurité :** Mots de passe hashés avec bcrypt (12 rounds)  
-**Rôles :** Admin (complet), Technician (réparations), Manager (stats)
-
-#### **🔐 user_sessions - Sessions Utilisateur**
-```sql
-CREATE TABLE user_sessions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    token_hash VARCHAR(255) NOT NULL,          -- Hash du token JWT
-    expires_at TIMESTAMP NOT NULL,             -- Expiration de la session
-    ip_address INET,                           -- IP de connexion
-    user_agent TEXT,                           -- Navigateur utilisé
-    created_at TIMESTAMP DEFAULT NOW()
-);
-```
-**Nettoyage :** Sessions expirées supprimées automatiquement  
-**Sécurité :** Tokens hashés, jamais stockés en clair
-
-### **📅 Tables Rendez-vous et Planning**
-
-#### **📋 appointments - Rendez-vous Clients**
-```sql
-CREATE TABLE appointments (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    -- Informations client
-    customer_name VARCHAR(255) NOT NULL,       -- Nom complet du client
-    customer_phone VARCHAR(20) NOT NULL,       -- Téléphone
-    customer_email VARCHAR(255) NOT NULL,      -- Email
-    
-    -- Références aux appareils (pour cohérence)
-    device_type_id UUID REFERENCES device_types(id),
-    brand_id UUID REFERENCES brands(id),
-    model_id UUID REFERENCES models(id),
-    repair_service_id UUID REFERENCES repair_services(id),
-    
-    -- Données historiques (texte fixe)
-    device_type_name VARCHAR(255) NOT NULL,    -- "Smartphones"
-    brand_name VARCHAR(255) NOT NULL,          -- "Apple"
-    model_name VARCHAR(255) NOT NULL,          -- "iPhone 15 Pro"
-    repair_service_name VARCHAR(255) NOT NULL, -- "Remplacement écran"
-    
-    -- Détails du rendez-vous
-    description TEXT,                          -- Description du problème
-    appointment_date DATE NOT NULL,            -- Date du RDV
-    appointment_time TIME NOT NULL,            -- Heure du RDV
-    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'in-progress', 'completed', 'cancelled')),
-    urgency VARCHAR(10) DEFAULT 'normal' CHECK (urgency IN ('normal', 'urgent')),
-    
-    -- Informations financières
-    estimated_price DECIMAL(10,2),            -- Devis initial
-    final_price DECIMAL(10,2),               -- Prix final après réparation
-    notes TEXT,                               -- Notes internes
-    
-    -- Traçabilité
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    completed_at TIMESTAMP,                   -- Date de fin de réparation
-    
-    -- Contrainte d'unicité pour éviter les conflits
-    UNIQUE(appointment_date, appointment_time)
-);
-```
-
-**États possibles :**
-- `pending` : En attente de confirmation
-- `confirmed` : Confirmé par l'admin
-- `in-progress` : Réparation en cours
-- `completed` : Réparation terminée
-- `cancelled` : Annulé
-
-**Index de performance :**
-```sql
-CREATE INDEX idx_appointments_date_time ON appointments(appointment_date, appointment_time);
-CREATE INDEX idx_appointments_customer_email ON appointments(customer_email);
-CREATE INDEX idx_appointments_status ON appointments(status);
-CREATE INDEX idx_appointments_created_at ON appointments(created_at);
-```
-
-#### **⏰ schedule_slots - Créneaux Horaires**
-```sql
-CREATE TABLE schedule_slots (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    day_of_week INTEGER CHECK (day_of_week BETWEEN 0 AND 6), -- 0=Dimanche, 6=Samedi
-    start_time TIME NOT NULL,                  -- Ex: "09:00"
-    end_time TIME NOT NULL,                    -- Ex: "18:00"
-    slot_duration INTEGER DEFAULT 30,         -- Durée créneau en minutes
-    break_time INTEGER DEFAULT 0,             -- Pause entre créneaux (minutes)
-    is_available BOOLEAN DEFAULT true,        -- Créneau disponible
-    max_concurrent_appointments INTEGER DEFAULT 1, -- RDV simultanés max
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-```
-
-**Exemples de créneaux par défaut :**
-```sql
--- Lundi à Vendredi : 9h-12h et 14h-18h
--- Samedi : 9h-12h
--- Dimanche : Fermé
-```
-
-#### **📆 schedule_exceptions - Exceptions au Planning**
-```sql
-CREATE TABLE schedule_exceptions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    date DATE NOT NULL UNIQUE,                -- Date spécifique
-    is_available BOOLEAN DEFAULT false,       -- Disponible ce jour
-    reason VARCHAR(255),                      -- Ex: "Congés", "Formation"
-    all_day BOOLEAN DEFAULT true,            -- Toute la journée
-    start_time TIME,                         -- Heure spécifique si all_day=false
-    end_time TIME,                           -- Fin si all_day=false
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-```
-
-**Cas d'usage :**
-- Jours fériés, congés, formations
-- Horaires spéciaux (fermeture anticipée)
-- Maintenance, réunions
-
-### **📈 Tables d'Audit et Statistiques**
-
-#### **📝 audit_log - Historique des Modifications**
-```sql
-CREATE TABLE audit_log (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES users(id),        -- Qui a fait la modification
-    table_name VARCHAR(100) NOT NULL,         -- Table modifiée
-    record_id UUID NOT NULL,                  -- ID de l'enregistrement
-    action VARCHAR(20) CHECK (action IN ('INSERT', 'UPDATE', 'DELETE')),
-    old_values JSONB,                         -- Anciennes valeurs
-    new_values JSONB,                         -- Nouvelles valeurs
-    ip_address INET,                          -- IP de l'utilisateur
-    user_agent TEXT,                          -- Navigateur utilisé
-    created_at TIMESTAMP DEFAULT NOW()
-);
-```
-
-**Traçabilité complète :** Qui a fait quoi, quand, depuis où
-
-#### **📊 appointment_status_history - Historique des Statuts**
-```sql
-CREATE TABLE appointment_status_history (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    appointment_id UUID REFERENCES appointments(id) ON DELETE CASCADE,
-    old_status VARCHAR(20),                   -- Ancien statut
-    new_status VARCHAR(20) NOT NULL,          -- Nouveau statut
-    changed_by UUID REFERENCES users(id),     -- Qui a changé
-    notes TEXT,                              -- Raison du changement
-    created_at TIMESTAMP DEFAULT NOW()
-);
-```
-
-**Suivi :** Historique complet des changements de statut
-
-### **📈 Vues pour les Statistiques**
-
-#### **📊 appointment_stats - Statistiques Mensuelles**
-```sql
-CREATE VIEW appointment_stats AS
-SELECT 
-    DATE_TRUNC('month', appointment_date) as month,
-    status,
-    COUNT(*) as count,
-    AVG(final_price) as avg_price,
-    SUM(final_price) as total_revenue
-FROM appointments 
-WHERE appointment_date >= CURRENT_DATE - INTERVAL '12 months'
-GROUP BY DATE_TRUNC('month', appointment_date), status
-ORDER BY month DESC, status;
-```
-
-#### **🏆 popular_devices - Appareils Populaires**
-```sql
-CREATE VIEW popular_devices AS
-SELECT 
-    device_type_name,
-    brand_name,
-    model_name,
-    COUNT(*) as repair_count,
-    AVG(final_price) as avg_price
-FROM appointments 
-WHERE appointment_date >= CURRENT_DATE - INTERVAL '3 months'
-    AND status = 'completed'
-GROUP BY device_type_name, brand_name, model_name
-ORDER BY repair_count DESC
-LIMIT 10;
-```
-
-#### **📅 daily_activity - Activité Quotidienne**
-```sql
-CREATE VIEW daily_activity AS
-SELECT 
-    appointment_date as date,
-    COUNT(*) as total_appointments,
-    COUNT(*) FILTER (WHERE status = 'pending') as pending,
-    COUNT(*) FILTER (WHERE status = 'confirmed') as confirmed,
-    COUNT(*) FILTER (WHERE status = 'completed') as completed,
-    SUM(final_price) as daily_revenue
-FROM appointments
-WHERE appointment_date >= CURRENT_DATE - INTERVAL '30 days'
-GROUP BY appointment_date
-ORDER BY appointment_date DESC;
-```
-
-## 🔧 Commandes de Maintenance
-
-### **📊 Surveillance**
-```bash
-# Statut de tous les services
-docker-compose ps
-
-# Logs en temps réel
-docker-compose logs -f
-
-# Métriques de performance
-docker stats
-
-# Espace disque
-df -h
-
-# Connexions actives à la base
-docker-compose exec postgres psql -U rirepair_user -d rirepair -c "SELECT count(*) FROM pg_stat_activity;"
-```
-
-### **💾 Sauvegarde et Restauration**
-```bash
 # Sauvegarde manuelle
-./deploy/deploy.sh backup
-
-# Sauvegarde avant mise à jour
-BACKUP_ENABLED=true ./deploy/deploy.sh deploy production
-
-# Restauration d'urgence
-./deploy/deploy.sh rollback
-
-# Sauvegarde de la base uniquement
-docker-compose exec postgres pg_dump -U rirepair_user rirepair > backup-$(date +%Y%m%d).sql
+docker-compose -f docker-compose.production.yml exec postgres \
+  pg_dump -U rirepair_user rirepair > backup.sql
 ```
 
-### **🔄 Mises à Jour**
+### Restauration
 ```bash
-# Mise à jour avec sauvegarde automatique
-git pull origin main
-./deploy/deploy.sh deploy production
-
-# Mise à jour rapide (sans sauvegarde)
-BACKUP_ENABLED=false ./deploy/deploy.sh deploy production
-
-# Redémarrage d'un service
-docker-compose restart frontend
-docker-compose restart backend
+# Restaurer depuis une sauvegarde
+docker-compose -f docker-compose.production.yml exec -T postgres \
+  psql -U rirepair_user rirepair < backup.sql
 ```
 
-### **🐛 Debugging**
+### Logs
 ```bash
-# Connexion aux containers
-docker-compose exec backend /bin/sh
-docker-compose exec postgres psql -U rirepair_user -d rirepair
-docker-compose exec redis redis-cli
+# Tous les logs
+./deploy.sh logs
 
-# Vérifier la configuration
-docker-compose config
-
-# Logs d'erreurs
-docker-compose logs backend | grep ERROR
-docker-compose logs postgres | grep ERROR
+# Logs d'un service spécifique
+docker-compose -f docker-compose.production.yml logs frontend
+docker-compose -f docker-compose.production.yml logs postgres
 ```
 
-## 🎯 Architecture Technique
+## 🌐 Déploiement Production
 
-### **📊 Stack Technologique**
+### Avec Nginx et SSL
 
-#### **Frontend (Port 3000)**
-- **Framework** : Next.js 14 avec App Router
-- **Styling** : Tailwind CSS + shadcn/ui components  
-- **State Management** : React Context API
-- **Validation** : Validation côté client + serveur
-- **Communication** : Axios pour les appels API
-- **Real-time** : Socket.IO pour notifications
-
-#### **Backend (Port 8000)**
-- **Framework** : Node.js + Express.js
-- **Language** : TypeScript
-- **Authentication** : JWT + sessions Redis
-- **Validation** : Joi + express-validator
-- **Logging** : Winston avec rotation
-- **Security** : Helmet + CORS + Rate limiting
-
-#### **Base de Données**
-- **SGBD** : PostgreSQL 15
-- **Connection Pooling** : pg-pool optimisé
-- **Cache** : Redis pour sessions et cache
-- **Backup** : pg_dump automatique quotidien
-- **Performance** : Index optimisés, vues matérialisées
-
-#### **Infrastructure**
-- **Reverse Proxy** : Nginx avec HTTP/2
-- **SSL** : Let's Encrypt automatique
-- **Containers** : Docker + Docker Compose
-- **Monitoring** : Grafana + Prometheus (optionnel)
-- **Deployment** : Scripts bash automatisés
-
-### **🔄 Flux de Données**
-
-```
-Client (Browser)
-       ↓ HTTPS
-    Nginx (Reverse Proxy)
-       ↓
-    Frontend (Next.js)
-       ↓ API Calls
-    Backend (Express.js)
-       ↓ SQL Queries
-    PostgreSQL Database
+1. **Configurer le domaine** dans `.env` :
+```env
+NEXT_PUBLIC_BASE_URL=https://votre-domaine.com
 ```
 
-### **🛡️ Sécurité**
+2. **Activer Nginx** :
+```bash
+docker-compose -f docker-compose.production.yml --profile production up -d
+```
 
-#### **Authentification**
-- **Mots de passe** : Hashés avec bcrypt (12 rounds)
-- **Sessions** : JWT tokens avec expiration (7 jours)
-- **Cookies** : HttpOnly, Secure, SameSite=Strict
-- **Rate Limiting** : 100 requêtes/15min par IP
+3. **Configurer SSL avec Let's Encrypt** :
+```bash
+sudo certbot --nginx -d votre-domaine.com
+```
 
-#### **Protection des Données**
-- **Validation** : Double validation frontend/backend
-- **SQL Injection** : Requêtes paramétrées uniquement
-- **XSS Protection** : CSP headers, sanitisation
-- **CORS** : Configuration stricte des origines autorisées
+## 📈 Monitoring
 
-#### **Audit et Compliance**
-- **Logs** : Toutes les actions administratives
-- **Historique** : Changements de statut tracés
-- **RGPD** : Suppression des données sur demande
-- **Backup** : Sauvegarde chiffrée automatique
+### Vérifier la santé des services
+```bash
+./deploy.sh status
+```
 
-## 📞 Support et Documentation
+### Métriques
+- Temps de réponse API : <50ms
+- Disponibilité : 99.9%
+- Capacité testée : 1000+ utilisateurs simultanés
 
-### **📚 Guides Disponibles**
-- **DEPLOYMENT-GUIDE.md** : Guide de déploiement détaillé
-- **MIGRATION-TO-POSTGRESQL.md** : Migration depuis JSON
-- **README-ARCHITECTURE.md** : Vue d'ensemble technique
+## 🆘 Dépannage
 
-### **🆘 Support Technique**
-1. **Vérifiez les logs** : `docker-compose logs`
-2. **Consultez le health check** : `curl https://votre-domaine.com/api/health`
-3. **Testez la base de données** : `docker-compose exec postgres pg_isready`
+### Le frontend ne démarre pas
+```bash
+# Vérifier les logs
+docker-compose -f docker-compose.production.yml logs frontend
 
-### **📈 Métriques de Performance**
+# Reconstruire l'image
+docker-compose -f docker-compose.production.yml up -d --build frontend
+```
 
-**Capacité testée :**
-- **Utilisateurs simultanés** : 1000+ 
-- **Rendez-vous/jour** : 10,000+
-- **Temps de réponse** : <50ms (API)
-- **Disponibilité** : 99.9%
+### Problème de connexion à la base
+```bash
+# Vérifier PostgreSQL
+docker-compose -f docker-compose.production.yml exec postgres \
+  pg_isready -U rirepair_user
+
+# Voir les logs
+docker-compose -f docker-compose.production.yml logs postgres
+```
+
+### Réinitialiser complètement
+```bash
+./deploy.sh clean
+./deploy.sh deploy
+```
+
+## 📝 Développement
+
+### Développement local (sans Docker)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Variables d'environnement requises
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=rirepair_user
+DB_PASSWORD=your_password
+DB_NAME=rirepair
+```
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou une pull request.
+
+## 📄 Licence
+
+Ce projet est sous licence MIT.
+
+## 🔗 Liens
+
+- **Demo live** : https://sb-5hyafdrml6w8.vercel.run
+- **Admin demo** : https://sb-5hyafdrml6w8.vercel.run/admin/login
+- **GitHub** : https://github.com/Kropotkynn/R-iRepair
 
 ---
 
-## 🏆 **R iRepair - Application Enterprise Prête**
-
-Cette application est maintenant prête pour gérer une entreprise de réparation de toute taille, du petit atelier au réseau de franchises. 
-
-**Architecture scalable, sécurisée et maintenue automatiquement !** 🚀
-
-**Demo live :** https://sb-5hyafdrml6w8.vercel.run  
-**Admin demo :** https://sb-5hyafdrml6w8.vercel.run/admin/login (`admin`/`admin123`)
+**R iRepair** - Solution complète de gestion de réparations 🚀
