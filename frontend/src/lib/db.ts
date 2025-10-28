@@ -4,7 +4,7 @@
 
 import { Pool, PoolClient, QueryResult } from 'pg';
 
-// Configuration de la connexion
+// Configuration de la connexion avec retry et meilleure gestion des erreurs
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432'),
@@ -13,7 +13,12 @@ const pool = new Pool({
   database: process.env.DB_NAME || 'rirepair',
   max: 20, // Nombre maximum de connexions dans le pool
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+  connectionTimeoutMillis: 10000, // Augmenté à 10 secondes
+  statement_timeout: 30000, // Timeout pour les requêtes
+  query_timeout: 30000,
+  // Retry automatique
+  keepAlive: true,
+  keepAliveInitialDelayMillis: 10000,
 });
 
 // Gestion des erreurs du pool
@@ -26,26 +31,50 @@ pool.on('error', (err) => {
 // =====================================================
 
 /**
- * Exécute une requête SQL
+ * Exécute une requête SQL avec retry automatique
  */
 export async function query<T extends Record<string, any> = any>(
   text: string,
   params?: any[]
 ): Promise<QueryResult<T>> {
   const start = Date.now();
-  try {
-    const result = await pool.query<T>(text, params);
-    const duration = Date.now() - start;
-    
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Query executed:', { text, duration, rows: result.rowCount });
+  const maxRetries = 3;
+  let lastError: any;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const result = await pool.query<T>(text, params);
+      const duration = Date.now() - start;
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Query executed:', { text, duration, rows: result.rowCount, attempt });
+      }
+      
+      return result;
+    } catch (error: any) {
+      lastError = error;
+      console.error(`Database query error (attempt ${attempt}/${maxRetries}):`, {
+        error: error.message,
+        code: error.code,
+        query: text.substring(0, 100)
+      });
+      
+      // Ne pas retry sur certaines erreurs
+      if (error.code === '23505' || // Violation de contrainte unique
+          error.code === '23503' || // Violation de clé étrangère
+          error.code === '42P01' || // Table n'existe pas
+          error.code === '42703') { // Colonne n'existe pas
+        throw error;
+      }
+      
+      // Attendre avant de réessayer
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+      }
     }
-    
-    return result;
-  } catch (error) {
-    console.error('Database query error:', error);
-    throw error;
   }
+  
+  throw lastError;
 }
 
 /**

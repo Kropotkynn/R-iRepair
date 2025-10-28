@@ -96,9 +96,27 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const startTime = Date.now();
+  
   try {
     const { id } = params;
+    
+    console.log(`[PUT /api/appointments/${id}] Début de la requête`);
+    
+    // Vérifier que l'ID est valide
+    if (!id || id === 'undefined' || id === 'null') {
+      console.error(`[PUT /api/appointments/${id}] ID invalide`);
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'ID de rendez-vous invalide'
+        },
+        { status: 400 }
+      );
+    }
+    
     const body = await request.json();
+    console.log(`[PUT /api/appointments/${id}] Body reçu:`, JSON.stringify(body, null, 2));
 
     // Mapping camelCase vers snake_case
     const fieldMapping: { [key: string]: string } = {
@@ -147,14 +165,16 @@ export async function PUT(
     // Parcourir tous les champs du body
     for (const [key, value] of Object.entries(body)) {
       const dbField = fieldMapping[key];
-      if (dbField && value !== undefined) {
+      if (dbField && value !== undefined && value !== null) {
         updates.push(`${dbField} = \$${paramIndex}`);
         values.push(value);
+        console.log(`[PUT /api/appointments/${id}] Champ à mettre à jour: ${dbField} = ${value}`);
         paramIndex++;
       }
     }
 
     if (updates.length === 0) {
+      console.error(`[PUT /api/appointments/${id}] Aucune donnée à mettre à jour`);
       return NextResponse.json(
         {
           success: false,
@@ -167,19 +187,23 @@ export async function PUT(
     // Ajouter completed_at si le statut passe à completed
     if (body.status === 'completed') {
       updates.push(`completed_at = NOW()`);
+      console.log(`[PUT /api/appointments/${id}] Ajout de completed_at`);
     }
 
     values.push(id);
 
-    const result = await query(
-      `UPDATE appointments 
+    const sqlQuery = `UPDATE appointments 
        SET ${updates.join(', ')}, updated_at = NOW()
        WHERE id = \$${paramIndex}
-       RETURNING *`,
-      values
-    );
+       RETURNING *`;
+    
+    console.log(`[PUT /api/appointments/${id}] SQL:`, sqlQuery);
+    console.log(`[PUT /api/appointments/${id}] Values:`, values);
+
+    const result = await query(sqlQuery, values);
 
     if (result.rowCount === 0) {
+      console.error(`[PUT /api/appointments/${id}] Rendez-vous non trouvé`);
       return NextResponse.json(
         {
           success: false,
@@ -190,6 +214,9 @@ export async function PUT(
     }
 
     const appointment = result.rows[0];
+    const duration = Date.now() - startTime;
+    console.log(`[PUT /api/appointments/${id}] Succès en ${duration}ms`);
+    
     return NextResponse.json({
       success: true,
       data: {
@@ -220,12 +247,19 @@ export async function PUT(
       message: 'Rendez-vous mis à jour avec succès'
     });
   } catch (error: any) {
-    console.error('Error updating appointment:', error);
+    const duration = Date.now() - startTime;
+    console.error(`[PUT /api/appointments/${params.id}] Erreur après ${duration}ms:`, {
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
+    
     return NextResponse.json(
       {
         success: false,
         error: 'Erreur lors de la mise à jour du rendez-vous',
-        message: error.message
+        message: error.message,
+        code: error.code
       },
       { status: 500 }
     );
@@ -237,8 +271,24 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const startTime = Date.now();
+  
   try {
     const { id } = params;
+    
+    console.log(`[DELETE /api/appointments/${id}] Début de la requête`);
+    
+    // Vérifier que l'ID est valide
+    if (!id || id === 'undefined' || id === 'null') {
+      console.error(`[DELETE /api/appointments/${id}] ID invalide`);
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'ID de rendez-vous invalide'
+        },
+        { status: 400 }
+      );
+    }
 
     const result = await query(
       `DELETE FROM appointments WHERE id = \$1 RETURNING id`,
@@ -246,6 +296,7 @@ export async function DELETE(
     );
 
     if (result.rowCount === 0) {
+      console.error(`[DELETE /api/appointments/${id}] Rendez-vous non trouvé`);
       return NextResponse.json(
         {
           success: false,
@@ -255,17 +306,27 @@ export async function DELETE(
       );
     }
 
+    const duration = Date.now() - startTime;
+    console.log(`[DELETE /api/appointments/${id}] Succès en ${duration}ms`);
+
     return NextResponse.json({
       success: true,
       message: 'Rendez-vous supprimé avec succès'
     });
   } catch (error: any) {
-    console.error('Error deleting appointment:', error);
+    const duration = Date.now() - startTime;
+    console.error(`[DELETE /api/appointments/${params.id}] Erreur après ${duration}ms:`, {
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
+    
     return NextResponse.json(
       {
         success: false,
         error: 'Erreur lors de la suppression du rendez-vous',
-        message: error.message
+        message: error.message,
+        code: error.code
       },
       { status: 500 }
     );
