@@ -205,7 +205,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Créer le rendez-vous
-    // Note: Les IDs sont NULL car nous stockons les noms en texte pour l'historique
+    // Note: Les IDs peuvent être NULL ou des UUIDs valides
+    // Si les IDs sont fournis et valides (UUIDs), on les utilise, sinon NULL
+    const isValidUUID = (id: any) => {
+      if (!id) return false;
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      return uuidRegex.test(String(id));
+    };
+
+    const finalDeviceTypeId = isValidUUID(device_type_id) ? device_type_id : null;
+    const finalBrandId = isValidUUID(brand_id) ? brand_id : null;
+    const finalModelId = isValidUUID(model_id) ? model_id : null;
+    const finalRepairServiceId = isValidUUID(repair_service_id) ? repair_service_id : null;
+
     const result = await query(
       `INSERT INTO appointments (
         customer_name, customer_phone, customer_email,
@@ -214,10 +226,11 @@ export async function POST(request: NextRequest) {
         description, appointment_date, appointment_time,
         status, urgency, estimated_price, created_at, updated_at
       ) VALUES (
-        \$1, \$2, \$3, NULL, NULL, NULL, NULL, \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13, NOW(), NOW()
+        \$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13, \$14, \$15, \$16, \$17, NOW(), NOW()
       ) RETURNING *`,
       [
         customer_name, customer_phone, customer_email,
+        finalDeviceTypeId, finalBrandId, finalModelId, finalRepairServiceId,
         device_type_name, brand_name, model_name, repair_service_name,
         description, appointment_date, appointment_time,
         'pending', urgency, estimated_price
