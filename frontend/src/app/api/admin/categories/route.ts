@@ -73,8 +73,8 @@ export async function POST(request: NextRequest) {
           );
         }
         result = await query(
-          'INSERT INTO device_types (name, icon, description) VALUES ($1, $2, $3) RETURNING *',
-          [data.name, data.icon, data.description]
+          'INSERT INTO device_types (name, icon, description, image_url) VALUES ($1, $2, $3, $4) RETURNING *',
+          [data.name, data.icon, data.description, data.image_url || null]
         );
         message = 'Type d\'appareil ajouté avec succès';
         break;
@@ -87,8 +87,8 @@ export async function POST(request: NextRequest) {
           );
         }
         result = await query(
-          'INSERT INTO brands (name, device_type_id, logo) VALUES ($1, $2, $3) RETURNING *',
-          [data.name, data.deviceTypeId, data.logo || null]
+          'INSERT INTO brands (name, device_type_id, image_url) VALUES ($1, $2, $3) RETURNING *',
+          [data.name, data.deviceTypeId, data.image_url || null]
         );
         message = 'Marque ajoutée avec succès';
         break;
@@ -101,8 +101,8 @@ export async function POST(request: NextRequest) {
           );
         }
         result = await query(
-          'INSERT INTO models (name, brand_id, image, estimated_price, repair_time) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-          [data.name, data.brandId, data.image || null, data.estimatedPrice || null, data.repairTime || null]
+          'INSERT INTO models (name, brand_id, image_url, estimated_price, repair_time) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+          [data.name, data.brandId, data.image_url || null, data.estimatedPrice || null, data.repairTime || null]
         );
         message = 'Modèle ajouté avec succès';
         break;
@@ -184,8 +184,8 @@ export async function PUT(request: NextRequest) {
           );
         }
         result = await query(
-          'UPDATE device_types SET name = $1, icon = $2, description = $3, updated_at = NOW() WHERE id = $4 RETURNING *',
-          [data.name, data.icon, data.description, id]
+          'UPDATE device_types SET name = $1, icon = $2, description = $3, image_url = $4, updated_at = NOW() WHERE id = $5 RETURNING *',
+          [data.name, data.icon, data.description, data.image_url || null, id]
         );
         message = 'Type d\'appareil modifié avec succès';
         break;
@@ -198,8 +198,8 @@ export async function PUT(request: NextRequest) {
           );
         }
         result = await query(
-          'UPDATE brands SET name = $1, device_type_id = $2, logo = $3, updated_at = NOW() WHERE id = $4 RETURNING *',
-          [data.name, data.deviceTypeId, data.logo || null, id]
+          'UPDATE brands SET name = $1, device_type_id = $2, image_url = $3, updated_at = NOW() WHERE id = $4 RETURNING *',
+          [data.name, data.deviceTypeId, data.image_url || null, id]
         );
         message = 'Marque modifiée avec succès';
         break;
@@ -212,8 +212,8 @@ export async function PUT(request: NextRequest) {
           );
         }
         result = await query(
-          'UPDATE models SET name = $1, brand_id = $2, image = $3, estimated_price = $4, repair_time = $5, updated_at = NOW() WHERE id = $6 RETURNING *',
-          [data.name, data.brandId, data.image || null, data.estimatedPrice || null, data.repairTime || null, id]
+          'UPDATE models SET name = $1, brand_id = $2, image_url = $3, estimated_price = $4, repair_time = $5, updated_at = NOW() WHERE id = $6 RETURNING *',
+          [data.name, data.brandId, data.image_url || null, data.estimatedPrice || null, data.repairTime || null, id]
         );
         message = 'Modèle modifié avec succès';
         break;
