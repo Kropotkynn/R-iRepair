@@ -4,12 +4,15 @@ export interface DeviceType {
   name: string;
   icon: string;
   description: string;
+  image_url?: string;
 }
 
 export interface Brand {
   id: string;
   name: string;
   deviceTypeId: string;
+  image_url?: string;
+  // Rétrocompatibilité
   logo?: string;
 }
 
@@ -17,9 +20,11 @@ export interface Model {
   id: string;
   name: string;
   brandId: string;
-  image?: string;
+  image_url?: string;
   estimatedPrice?: string;
   repairTime?: string;
+  // Rétrocompatibilité
+  image?: string;
 }
 
 export interface RepairService {
@@ -171,8 +176,7 @@ export interface CategoryFormData {
   description?: string;
   deviceTypeId?: string;
   brandId?: string;
-  logo?: string;
-  image?: string;
+  image_url?: string;
   estimatedPrice?: string;
   repairTime?: string;
   price?: number;

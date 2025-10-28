@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { DeviceType, Brand, Model, RepairService, CategoryFormData, FormErrors } from '@/types';
 import { AdminProvider, useRequireAuth, useAdmin } from '@/lib/AdminContext';
+import ImageUpload from '@/components/ImageUpload';
 
 function CategoriesContent() {
   const { isAuthenticated, loading, user } = useRequireAuth();
@@ -34,8 +36,7 @@ function CategoriesContent() {
     description: '',
     deviceTypeId: '',
     brandId: '',
-    logo: '',
-    image: '',
+    image_url: '',
     estimatedPrice: '',
     repairTime: '',
     price: 0,
@@ -91,8 +92,7 @@ function CategoriesContent() {
       description: '',
       deviceTypeId: '',
       brandId: '',
-      logo: '',
-      image: '',
+      image_url: '',
       estimatedPrice: '',
       repairTime: '',
       price: 0,
@@ -112,14 +112,13 @@ function CategoriesContent() {
         name: item.name || '',
         icon: item.icon || '',
         description: item.description || '',
-        deviceTypeId: item.deviceTypeId || '',
-        brandId: item.brandId || '',
-        logo: item.logo || '',
-        image: item.image || '',
-        estimatedPrice: item.estimatedPrice || '',
-        repairTime: item.repairTime || '',
+        deviceTypeId: item.deviceTypeId || item.device_type_id || '',
+        brandId: item.brandId || item.brand_id || '',
+        image_url: item.image_url || '',
+        estimatedPrice: item.estimatedPrice || item.estimated_price || '',
+        repairTime: item.repairTime || item.repair_time || '',
         price: item.price || 0,
-        estimatedTime: item.estimatedTime || ''
+        estimatedTime: item.estimatedTime || item.estimated_time || ''
       });
     } else {
       resetForm();
@@ -400,8 +399,8 @@ function CategoriesContent() {
                       {brands.map((brand) => (
                         <tr key={brand.id}>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {brand.logo && (
-                              <img src={brand.logo} alt={brand.name} className="h-8 w-8 object-contain" />
+                            {brand.image_url && (
+                              <img src={brand.image_url} alt={brand.name} className="h-8 w-8 object-contain" />
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -451,9 +450,9 @@ function CategoriesContent() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {models.map((model) => (
                     <div key={model.id} className="border border-gray-200 rounded-lg p-4">
-                      {model.image && (
+                      {model.image_url && (
                         <img 
-                          src={model.image} 
+                          src={model.image_url} 
                           alt={model.name}
                           className="w-full h-32 object-cover rounded-lg mb-3"
                         />
@@ -635,6 +634,13 @@ function CategoriesContent() {
                         required
                       />
                     </div>
+                    
+                    <ImageUpload
+                      currentImage={formData.image_url}
+                      onImageChange={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+                      category="device-types"
+                      label="Image du type d'appareil"
+                    />
                   </>
                 )}
 
@@ -670,18 +676,12 @@ function CategoriesContent() {
                         ))}
                       </select>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        URL du Logo
-                      </label>
-                      <input
-                        type="url"
-                        value={formData.logo}
-                        onChange={(e) => setFormData(prev => ({ ...prev, logo: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                        placeholder="https://placehold.co/60x60?text=Logo"
-                      />
-                    </div>
+                    <ImageUpload
+                      currentImage={formData.image_url}
+                      onImageChange={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+                      category="brands"
+                      label="Logo de la marque"
+                    />
                   </>
                 )}
 
@@ -717,18 +717,12 @@ function CategoriesContent() {
                         ))}
                       </select>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        URL de l'Image
-                      </label>
-                      <input
-                        type="url"
-                        value={formData.image}
-                        onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                        placeholder="https://placehold.co/300x400?text=Device"
-                      />
-                    </div>
+                    <ImageUpload
+                      currentImage={formData.image_url}
+                      onImageChange={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+                      category="models"
+                      label="Image du modèle"
+                    />
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
