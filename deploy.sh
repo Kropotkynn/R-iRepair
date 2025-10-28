@@ -54,41 +54,143 @@ check_prerequisites() {
     fi
     print_success "Docker Compose is installed"
     
-    # Check if .env exists
+    # Check if .env exists, create with secure defaults if not
     if [ ! -f ".env" ]; then
-        print_warning ".env file not found, creating from example..."
-        if [ -f ".env.example" ]; then
-            cp .env.example .env
-            print_info "Please edit .env file with your configuration"
-        else
-            print_error ".env.example not found"
-            exit 1
-        fi
+        print_warning ".env file not found, creating with secure defaults..."
+        create_env_file
+        print_success ".env file created"
+    else
+        print_success ".env file exists"
     fi
-    print_success ".env file exists"
     
     echo ""
+}
+
+# Create .env file with secure defaults
+create_env_file() {
+    cat > .env << 'EOF'
+# =====================================================
+# R iRepair - Environment Configuration
+# =====================================================
+
+# Database PostgreSQL
+DB_HOST=postgres
+DB_PORT=5432
+DB_USER=rirepair_user
+DB_PASSWORD=rirepair_secure_password_change_this
+DB_NAME=rirepair
+DB_SSL=false
+
+# Node Environment
+NODE_ENV=production
+PORT=3000
+
+# Frontend URLs
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_APP_NAME=R iRepair
+NEXT_PUBLIC_APP_VERSION=1.0.0
+
+# Application Settings
+ALLOWED_ORIGINS=http://localhost:3000
+
+# Logging
+LOG_LEVEL=info
+EOF
+    
+    print_info ".env file created with default configuration"
+}
+
+# Check if PostgreSQL volume needs reset
+check_postgres_volume() {
+    print_info "Checking PostgreSQL volume consistency..."
+    
+    # Check if volume exists
+    if docker volume ls | grep -q "r-irepair_postgres_data"; then
+        # Check if we can connect with current credentials
+        if docker-compose ps | grep -q "rirepair-postgres.*Up"; then
+            if ! docker-compose exec -T postgres pg_isready -U rirepair_user -d rirepair &> /dev/null; then
+                print_warning "PostgreSQL volume exists but credentials don't match"
+                print_warning "This might cause authentication issues"
+                
+                read -p "Reset PostgreSQL volume? This will recreate the database (yes/no): " reset_volume
+                if [ "$reset_volume" = "yes" ]; then
+                    print_info "Stopping services and removing PostgreSQL volume..."
+                    docker-compose down
+                    docker volume rm r-irepair_postgres_data 2>/dev/null || true
+                    print_success "PostgreSQL volume removed, will be recreated with correct credentials"
+                fi
+            fi
+        fi
+    fi
 }
 
 # Deploy function
 deploy() {
     print_header "Deploying R iRepair"
     
+    # Check PostgreSQL volume consistency
+    check_postgres_volume
+    
     # Stop existing containers
     print_info "Stopping existing containers..."
-    docker-compose -f docker-compose.production.yml down 2>/dev/null || true
+    docker-compose down 2>/dev/null || true
     
-    # Build and start
+    # Build and start services
     print_info "Building and starting containers..."
-    docker-compose -f docker-compose.production.yml up -d --build
+    docker-compose up -d --build
     
-    # Wait for services to be healthy
-    print_info "Waiting for services to be ready..."
+    # Wait for PostgreSQL to be ready
+    print_info "Waiting for PostgreSQL to be ready..."
+    sleep 15
+    
+    # Verify PostgreSQL connection
+    print_info "Verifying PostgreSQL connection..."
+    MAX_RETRIES=5
+    RETRY_COUNT=0
+    
+    while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+        if docker-compose exec -T postgres pg_isready -U rirepair_user -d rirepair &> /dev/null; then
+            print_success "PostgreSQL is ready and accepting connections"
+            break
+        else
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                print_warning "PostgreSQL not ready yet, retrying... ($RETRY_COUNT/$MAX_RETRIES)"
+                sleep 5
+            else
+                print_error "PostgreSQL failed to start properly"
+                print_info "Check logs with: docker-compose logs postgres"
+                exit 1
+            fi
+        fi
+    done
+    
+    # Wait for frontend to be ready
+    print_info "Waiting for frontend to be ready..."
     sleep 10
     
-    # Check status
+    # Verify frontend connection
+    print_info "Verifying frontend connection..."
+    if curl -f http://localhost:3000 &> /dev/null; then
+        print_success "Frontend is ready and responding"
+    else
+        print_warning "Frontend might not be fully ready yet"
+        print_info "Check logs with: docker-compose logs frontend"
+    fi
+    
+    # Check service status
     print_info "Checking service status..."
-    docker-compose -f docker-compose.production.yml ps
+    docker-compose ps
+    
+    # Test API endpoints
+    print_info "Testing API endpoints..."
+    if curl -s http://localhost:3000/api/devices/types | grep -q "success"; then
+        print_success "API is working correctly"
+    else
+        print_warning "API might have issues"
+        print_info "Check logs with: docker-compose logs frontend"
+    fi
     
     echo ""
     print_success "Deployment complete!"
@@ -101,6 +203,11 @@ deploy() {
     print_info "Default admin credentials:"
     echo "  Username: admin"
     echo "  Password: admin123"
+    echo ""
+    print_info "Useful commands:"
+    echo "  ./deploy.sh logs     - View logs"
+    echo "  ./deploy.sh status   - Check status"
+    echo "  ./deploy.sh backup   - Create backup"
     echo ""
 }
 
@@ -200,35 +307,41 @@ show_help() {
 }
 
 # Main script
-case "${1:-deploy}" in
-    deploy)
-        check_prerequisites
-        deploy
-        ;;
-    stop)
-        stop
-        ;;
-    restart)
-        restart
-        ;;
-    logs)
-        logs
-        ;;
-    status)
-        status
-        ;;
-    backup)
-        backup
-        ;;
-    clean)
-        clean
-        ;;
-    help|--help|-h)
-        show_help
-        ;;
-    *)
-        print_error "Unknown command: $1"
-        show_help
-        exit 1
-        ;;
-esac
+main() {
+    case "${1:-deploy}" in
+        deploy)
+            check_prerequisites
+            deploy
+            ;;
+        stop)
+            stop
+            ;;
+        restart)
+            check_prerequisites
+            restart
+            ;;
+        logs)
+            logs
+            ;;
+        status)
+            status
+            ;;
+        backup)
+            backup
+            ;;
+        clean)
+            clean
+            ;;
+        help|--help|-h)
+            show_help
+            ;;
+        *)
+            print_error "Unknown command: $1"
+            show_help
+            exit 1
+            ;;
+    esac
+}
+
+# Run main function
+main "$@"
