@@ -54,28 +54,85 @@ function AppointmentsContent() {
     }
   };
 
-   const handleStatusChange = async (appointmentId: string, newStatus: string) => {
-    try {
-      const response = await fetch(`/api/appointments/${appointmentId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        showToast('Statut mis à jour avec succès', 'success');
-        await loadAppointments();
-      } else {
-        showToast(result.error || 'Erreur lors de la mise à jour du statut', 'error');
-      }
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour:', error);
-      showToast('Erreur de connexion lors de la mise à jour', 'error');
+  const handleStatusChange = async (appointmentId: string, newStatus: string) => {
+    console.log(`[Admin] Mise à jour du statut pour l'ID: ${appointmentId} vers ${newStatus}`);
+    
+    // Validation de l'ID
+    if (!appointmentId || appointmentId === 'undefined') {
+      console.error('[Admin] ID invalide:', appointmentId);
+      showToast('Erreur: ID de rendez-vous invalide', 'error');
+      return;
     }
+    
+    const maxRetries = 3;
+    let lastError: any = null;
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`[Admin] Tentative ${attempt}/${maxRetries} de mise à jour...`);
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 secondes timeout
+        
+        const response = await fetch(`/api/appointments/${appointmentId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: newStatus }),
+          signal: controller.signal,
+        });
+        
+        clearTimeout(timeoutId);
+        
+        console.log(`[Admin] Réponse reçue: status=${response.status}`);
+        
+        let result;
+        try {
+          result = await response.json();
+        } catch (e) {
+          console.error('[Admin] Erreur de parsing JSON:', e);
+          result = { error: 'Réponse invalide du serveur' };
+        }
+
+        if (response.ok) {
+          console.log('[Admin] Mise à jour réussie');
+          showToast('Statut mis à jour avec succès', 'success');
+          await loadAppointments();
+          return; // Succès, on sort de la fonction
+        } else {
+          console.error('[Admin] Erreur serveur:', result);
+          lastError = new Error(result.error || `Erreur HTTP ${response.status}`);
+          
+          // Ne pas retry sur les erreurs 4xx (erreurs client)
+          if (response.status >= 400 && response.status < 500) {
+            showToast(result.error || 'Erreur lors de la mise à jour du statut', 'error');
+            return;
+          }
+        }
+      } catch (error: any) {
+        console.error(`[Admin] Erreur tentative ${attempt}:`, error);
+        lastError = error;
+        
+        if (error.name === 'AbortError') {
+          console.error('[Admin] Timeout de la requête');
+        }
+        
+        // Attendre avant de réessayer (sauf à la dernière tentative)
+        if (attempt < maxRetries) {
+          const delay = 1000 * attempt; // Backoff: 1s, 2s, 3s
+          console.log(`[Admin] Attente de ${delay}ms avant nouvelle tentative...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+    
+    // Si on arrive ici, toutes les tentatives ont échoué
+    console.error('[Admin] Toutes les tentatives ont échoué:', lastError);
+    showToast(
+      `Erreur de connexion après ${maxRetries} tentatives. Vérifiez votre connexion.`,
+      'error'
+    );
   };
 
    const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
@@ -94,29 +151,87 @@ function AppointmentsContent() {
   const handleDeleteConfirm = async () => {
     if (!appointmentToDelete) return;
 
+    console.log(`[Admin] Suppression du rendez-vous ID: ${appointmentToDelete.id}`);
+    
+    // Validation de l'ID
+    if (!appointmentToDelete.id || appointmentToDelete.id === 'undefined') {
+      console.error('[Admin] ID invalide:', appointmentToDelete.id);
+      showToast('Erreur: ID de rendez-vous invalide', 'error');
+      return;
+    }
+
     setIsDeleting(true);
     
-    try {
-      const response = await fetch(`/api/appointments/${appointmentToDelete.id}`, {
-        method: 'DELETE',
-      });
+    const maxRetries = 3;
+    let lastError: any = null;
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`[Admin] Tentative ${attempt}/${maxRetries} de suppression...`);
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 secondes timeout
+        
+        const response = await fetch(`/api/appointments/${appointmentToDelete.id}`, {
+          method: 'DELETE',
+          signal: controller.signal,
+        });
+        
+        clearTimeout(timeoutId);
+        
+        console.log(`[Admin] Réponse reçue: status=${response.status}`);
 
-      const result = await response.json();
+        let result;
+        try {
+          result = await response.json();
+        } catch (e) {
+          console.error('[Admin] Erreur de parsing JSON:', e);
+          result = { error: 'Réponse invalide du serveur' };
+        }
 
-      if (response.ok) {
-        showToast('Rendez-vous supprimé avec succès', 'success');
-        await loadAppointments();
-        setShowDeleteModal(false);
-        setAppointmentToDelete(null);
-      } else {
-        showToast(result.error || 'Erreur lors de la suppression', 'error');
+        if (response.ok) {
+          console.log('[Admin] Suppression réussie');
+          showToast('Rendez-vous supprimé avec succès', 'success');
+          await loadAppointments();
+          setShowDeleteModal(false);
+          setAppointmentToDelete(null);
+          setIsDeleting(false);
+          return; // Succès, on sort de la fonction
+        } else {
+          console.error('[Admin] Erreur serveur:', result);
+          lastError = new Error(result.error || `Erreur HTTP ${response.status}`);
+          
+          // Ne pas retry sur les erreurs 4xx (erreurs client)
+          if (response.status >= 400 && response.status < 500) {
+            showToast(result.error || 'Erreur lors de la suppression', 'error');
+            setIsDeleting(false);
+            return;
+          }
+        }
+      } catch (error: any) {
+        console.error(`[Admin] Erreur tentative ${attempt}:`, error);
+        lastError = error;
+        
+        if (error.name === 'AbortError') {
+          console.error('[Admin] Timeout de la requête');
+        }
+        
+        // Attendre avant de réessayer (sauf à la dernière tentative)
+        if (attempt < maxRetries) {
+          const delay = 1000 * attempt; // Backoff: 1s, 2s, 3s
+          console.log(`[Admin] Attente de ${delay}ms avant nouvelle tentative...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
       }
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      showToast('Erreur de connexion lors de la suppression', 'error');
-    } finally {
-      setIsDeleting(false);
     }
+    
+    // Si on arrive ici, toutes les tentatives ont échoué
+    console.error('[Admin] Toutes les tentatives ont échoué:', lastError);
+    showToast(
+      `Erreur de connexion après ${maxRetries} tentatives. Vérifiez votre connexion.`,
+      'error'
+    );
+    setIsDeleting(false);
   };
 
   const handleDeleteCancel = () => {
