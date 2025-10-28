@@ -80,10 +80,13 @@ function CalendarContent() {
       const monthNum = String(currentDay.getMonth() + 1).padStart(2, '0');
       const day = String(currentDay.getDate()).padStart(2, '0');
       const dateStr = `${year}-${monthNum}-${day}`;
+      
       // Afficher TOUS les rendez-vous sur le calendrier
-      const appointmentsForDay = appointments.filter(apt => 
-        apt.appointmentDate === dateStr
-      );
+      // Extraire uniquement la partie date (YYYY-MM-DD) de appointmentDate
+      const appointmentsForDay = appointments.filter(apt => {
+        const aptDate = apt.appointmentDate.split('T')[0]; // Extraire YYYY-MM-DD
+        return aptDate === dateStr;
+      });
       
       // Calculer isToday avec la date locale
       const today = new Date();
@@ -423,10 +426,10 @@ function CalendarContent() {
                       Rendez-vous du {formatDate(selectedDate)}
                     </h4>
                     
-                    {appointments.filter(apt => apt.appointmentDate === selectedDate).length > 0 ? (
+                    {appointments.filter(apt => apt.appointmentDate.split('T')[0] === selectedDate).length > 0 ? (
                       <div className="space-y-3">
                         {appointments
-                          .filter(apt => apt.appointmentDate === selectedDate)
+                          .filter(apt => apt.appointmentDate.split('T')[0] === selectedDate)
                           .sort((a, b) => a.appointmentTime.localeCompare(b.appointmentTime))
                           .map((apt) => (
                             <div key={apt.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
