@@ -399,6 +399,8 @@ function CategoriesContent() {
                     <tbody className="bg-white divide-y divide-gray-200">
                       {brands.map((brand) => {
                         const deviceType = deviceTypes.find(d => d.id === brand.deviceTypeId);
+                        const hasValidDeviceType = deviceType !== undefined;
+                        
                         return (
                           <tr key={brand.id} className="hover:bg-gray-50 transition-colors">
                             <td className="px-6 py-4 whitespace-nowrap">
@@ -414,17 +416,31 @@ function CategoriesContent() {
                               <div className="text-sm font-medium text-gray-900">{brand.name}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center space-x-2">
-                                <span className="text-2xl">{deviceType?.icon || '📱'}</span>
-                                <div>
-                                  <div className="text-sm font-medium text-gray-900">
-                                    {deviceType?.name || 'Non défini'}
-                                  </div>
-                                  <div className="text-xs text-gray-500">
-                                    {deviceType?.description || brand.deviceTypeId}
+                              {hasValidDeviceType ? (
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-2xl">{deviceType.icon}</span>
+                                  <div>
+                                    <div className="text-sm font-medium text-gray-900">
+                                      {deviceType.name}
+                                    </div>
+                                    <div className="text-xs text-gray-500">
+                                      {deviceType.description}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
+                              ) : (
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-2xl">⚠️</span>
+                                  <div>
+                                    <div className="text-sm font-medium text-red-600">
+                                      Type non défini
+                                    </div>
+                                    <div className="text-xs text-gray-500">
+                                      {brand.deviceTypeId ? `ID: ${brand.deviceTypeId.substring(0, 8)}...` : 'Aucun type associé'}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded">
@@ -435,6 +451,7 @@ function CategoriesContent() {
                               <button 
                                 onClick={() => openModal('edit', 'brand', brand)}
                                 className="text-blue-600 hover:text-blue-900 transition-colors"
+                                title={!hasValidDeviceType ? 'Modifier pour associer un type d\'appareil' : 'Modifier'}
                               >
                                 ✏️ Modifier
                               </button>
