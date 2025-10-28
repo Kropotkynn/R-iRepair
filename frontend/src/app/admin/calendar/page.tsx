@@ -80,9 +80,9 @@ function CalendarContent() {
       const monthNum = String(currentDay.getMonth() + 1).padStart(2, '0');
       const day = String(currentDay.getDate()).padStart(2, '0');
       const dateStr = `${year}-${monthNum}-${day}`;
-      // Filtrer uniquement les rendez-vous confirmés pour l'affichage calendrier
+      // Afficher TOUS les rendez-vous sur le calendrier
       const appointmentsForDay = appointments.filter(apt => 
-        apt.appointmentDate === dateStr && apt.status === 'confirmed'
+        apt.appointmentDate === dateStr
       );
       
       // Calculer isToday avec la date locale
