@@ -397,9 +397,9 @@ function CategoriesContent() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {brands.map((brand) => {
-                        const deviceType = deviceTypes.find(d => d.id === brand.deviceTypeId);
-                        const hasValidDeviceType = deviceType !== undefined;
+                      {brands.map((brand: any) => {
+                        // L'API retourne device_type_name et device_type_icon directement
+                        const hasValidDeviceType = brand.device_type_name && brand.device_type_icon;
                         
                         return (
                           <tr key={brand.id} className="hover:bg-gray-50 transition-colors">
@@ -418,13 +418,13 @@ function CategoriesContent() {
                             <td className="px-6 py-4 whitespace-nowrap">
                               {hasValidDeviceType ? (
                                 <div className="flex items-center space-x-2">
-                                  <span className="text-2xl">{deviceType.icon}</span>
+                                  <span className="text-2xl">{brand.device_type_icon}</span>
                                   <div>
                                     <div className="text-sm font-medium text-gray-900">
-                                      {deviceType.name}
+                                      {brand.device_type_name}
                                     </div>
                                     <div className="text-xs text-gray-500">
-                                      {deviceType.description}
+                                      {deviceTypes.find(d => d.id === brand.device_type_id)?.description || 'Type d\'appareil'}
                                     </div>
                                   </div>
                                 </div>
@@ -436,7 +436,7 @@ function CategoriesContent() {
                                       Type non défini
                                     </div>
                                     <div className="text-xs text-gray-500">
-                                      {brand.deviceTypeId ? `ID: ${brand.deviceTypeId.substring(0, 8)}...` : 'Aucun type associé'}
+                                      {brand.device_type_id ? `ID: ${brand.device_type_id.substring(0, 8)}...` : 'Aucun type associé'}
                                     </div>
                                   </div>
                                 </div>
@@ -449,7 +449,7 @@ function CategoriesContent() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                               <button 
-                                onClick={() => openModal('edit', 'brand', brand)}
+                                onClick={() => openModal('edit', 'brand', { ...brand, deviceTypeId: brand.device_type_id })}
                                 className="text-blue-600 hover:text-blue-900 transition-colors"
                                 title={!hasValidDeviceType ? 'Modifier pour associer un type d\'appareil' : 'Modifier'}
                               >
