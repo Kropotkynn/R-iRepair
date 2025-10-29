@@ -39,17 +39,12 @@ export default function Header() {
             >
               Réparations
             </Link>
+          
             <Link 
-              href="/#services" 
+              href="/warranty" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-300"
             >
-              Services
-            </Link>
-            <Link 
-              href="/#contact" 
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-300"
-            >
-              Contact
+              À Propos
             </Link>
           </nav>
 
