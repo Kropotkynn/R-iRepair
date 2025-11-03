@@ -16,9 +16,11 @@ export default function Header() {
         <div className="flex justify-between items-center h-16 sm:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="bg-blue-600 p-2 rounded-lg">
-              <span className="text-white text-xl font-bold">R</span>
-            </div>
+            <img 
+              src="/logo.svg" 
+              alt="R iRepair Logo" 
+              className="h-12 w-auto"
+            />
             <div className="flex flex-col">
               <span className="text-xl font-bold text-gray-900">R iRepair</span>
               <span className="text-xs text-gray-500 hidden sm:block">Réparation Expert</span>

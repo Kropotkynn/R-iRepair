@@ -12,9 +12,11 @@ export default function Footer() {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="bg-blue-600 p-2 rounded-lg">
-                <span className="text-white text-xl font-bold">R</span>
-              </div>
+              <img 
+                src="/logo.svg" 
+                alt="R iRepair Logo" 
+                className="h-10 w-auto"
+              />
               <div>
                 <h3 className="text-xl font-bold">R iRepair</h3>
                 <p className="text-sm text-gray-300">Réparation Expert</p>
