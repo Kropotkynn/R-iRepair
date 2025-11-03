@@ -64,8 +64,8 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Créer le dossier public (Next.js standalone n'en a pas besoin si vide)
-RUN mkdir -p ./public
+# Copier le dossier public avec tous les assets (logo, images, etc.)
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # Script de health check
 COPY --chown=nextjs:nodejs <<EOF /app/healthcheck.js
