@@ -16,7 +16,7 @@ const faqData: FAQItem[] = [
     id: 1,
     category: 'Général',
     question: 'Combien de temps prend une réparation ?',
-    answer: 'La durée dépend du type de réparation. Pour un écran de smartphone : 1-2h. Pour un ordinateur portable : 2-5 jours. Nous vous donnons toujours un délai précis lors du diagnostic.'
+    answer: 'La durée dépend du type de réparation. Pour un écran de smartphone : 30 minutes. Pour un ordinateur portable : 2-5 jours. Nous vous donnons toujours un délai précis lors du diagnostic.'
   },
   {
     id: 2,
@@ -82,7 +82,7 @@ const faqData: FAQItem[] = [
     id: 12,
     category: 'Pièces',
     question: 'Utilisez-vous des pièces d\'origine ?',
-    answer: 'Nous privilégions les pièces d\'origine quand c\'est possible. Sinon, nous utilisons des pièces compatibles de qualité équivalente, toujours garanties 6 mois.'
+    answer: 'Nous proposons tous types de qualité de pièces selon vos besoins et votre budget. 95% des pièces sont disponibles le jour même. Toutes nos pièces sont garanties 6 mois.'
   },
   {
     id: 13,
@@ -259,8 +259,8 @@ export default function FAQPage() {
               <div>
                 <div className="text-3xl mb-2">✉️</div>
                 <h4 className="font-semibold mb-2">Écrivez-nous</h4>
-                <a href="mailto:contact@rirepair.com" className="text-blue-100 hover:text-white transition-colors">
-                  contact@rirepair.com
+                <a href="mailto:r.irepair@outlook.fr" className="text-blue-100 hover:text-white transition-colors">
+                  r.irepair@outlook.fr
                 </a>
                 <p className="text-blue-200 text-sm mt-1">Réponse sous 24h</p>
               </div>

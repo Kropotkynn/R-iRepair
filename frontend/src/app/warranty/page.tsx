@@ -280,8 +280,8 @@ export default function WarrantyPage() {
             <div>
               <div className="text-3xl mb-2">✉️</div>
               <h3 className="font-semibold mb-2">Email</h3>
-              <a href="mailto:garantie@rirepair.com" className="text-blue-100 hover:text-white">
-                garantie@rirepair.com
+              <a href="mailto:r.irepair@outlook.fr" className="text-blue-100 hover:text-white">
+                r.irepair@outlook.fr
               </a>
             </div>
             

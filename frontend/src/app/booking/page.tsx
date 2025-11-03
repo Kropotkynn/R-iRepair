@@ -215,8 +215,8 @@ function BookingContent() {
                   </p>
                   <p className="flex items-center gap-2">
                     <span className="text-blue-600">✉️</span>
-                    <a href="mailto:contact@rirepair.com" className="text-blue-600 hover:underline">
-                      contact@rirepair.com
+                    <a href="mailto:r.irepair@outlook.fr" className="text-blue-600 hover:underline">
+                      r.irepair@outlook.fr
                     </a>
                   </p>
                   <p className="text-gray-600 mt-2">

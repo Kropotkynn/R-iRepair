@@ -45,12 +45,12 @@ export default function Header() {
             >
               Services
             </Link>
-            <Link 
-              href="/#contact" 
+            <a 
+              href="mailto:r.irepair@outlook.fr" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-300"
             >
               Contact
-            </Link>
+            </a>
           </nav>
 
           {/* Contact & CTA Desktop */}
@@ -125,13 +125,13 @@ export default function Header() {
             >
               Services
             </Link>
-            <Link 
-              href="/#contact" 
+            <a 
+              href="mailto:r.irepair@outlook.fr" 
               className="block px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg font-medium transition-colors duration-300"
               onClick={() => setIsMenuOpen(false)}
             >
               Contact
-            </Link>
+            </a>
             
             <div className="px-4 pt-4 border-t border-gray-200">
               <a 

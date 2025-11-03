@@ -175,10 +175,10 @@ export default function Footer() {
               <div className="flex items-center space-x-3">
                 <div className="text-blue-400">✉️</div>
                 <a 
-                  href="mailto:contact@rirepair.com" 
+                  href="mailto:r.irepair@outlook.fr" 
                   className="text-gray-300 hover:text-white transition-colors duration-300"
                 >
-                  contact@rirepair.com
+                  r.irepair@outlook.fr
                 </a>
               </div>
               
