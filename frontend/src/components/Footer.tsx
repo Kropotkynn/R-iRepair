@@ -157,8 +157,7 @@ export default function Footer() {
                 <div className="text-blue-400 mt-1">📍</div>
                 <div>
                   <p className="text-gray-300">
-                    123 Rue de la Réparation<br />
-                    75001 Paris, France
+                    Déplacement dans toutes les Yvelines (78)
                   </p>
                 </div>
               </div>
@@ -166,10 +165,10 @@ export default function Footer() {
               <div className="flex items-center space-x-3">
                 <div className="text-blue-400">📞</div>
                 <a 
-                  href="tel:+33123456789" 
+                  href="tel:+33601598289" 
                   className="text-gray-300 hover:text-white transition-colors duration-300"
                 >
-                  01 23 45 67 89
+                  06 01 59 82 89
                 </a>
               </div>
               

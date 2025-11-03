@@ -52,7 +52,7 @@ const faqData: FAQItem[] = [
     id: 7,
     category: 'Prix',
     question: 'Acceptez-vous les paiements par carte ?',
-    answer: 'Oui, nous acceptons tous les moyens de paiement : espèces, carte bancaire, chèques, et paiement mobile (Apple Pay, Google Pay).'
+    answer: 'Oui, nous acceptons tous les moyens de paiement : espèces, carte bancaire, et paiement mobile (Apple Pay, Google Pay).'
   },
   {
     id: 8,
@@ -94,7 +94,7 @@ const faqData: FAQItem[] = [
     id: 14,
     category: 'Rendez-vous',
     question: 'Comment prendre rendez-vous ?',
-    answer: 'Vous pouvez prendre rendez-vous en ligne sur notre site, par téléphone au 01 23 45 67 89, ou directement en boutique.'
+    answer: 'Vous pouvez prendre rendez-vous en ligne sur notre site ou par téléphone au 06 01 59 82 89.'
   },
   {
     id: 15,
@@ -250,8 +250,8 @@ export default function FAQPage() {
               <div>
                 <div className="text-3xl mb-2">📞</div>
                 <h4 className="font-semibold mb-2">Appelez-nous</h4>
-                <a href="tel:+33123456789" className="text-blue-100 hover:text-white transition-colors">
-                  01 23 45 67 89
+                <a href="tel:+33601598289" className="text-blue-100 hover:text-white transition-colors">
+                  06 01 59 82 89
                 </a>
                 <p className="text-blue-200 text-sm mt-1">Lun-Ven: 9h-19h</p>
               </div>

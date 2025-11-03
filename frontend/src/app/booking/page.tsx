@@ -209,8 +209,8 @@ function BookingContent() {
                 <div className="space-y-2 text-sm">
                   <p className="flex items-center gap-2">
                     <span className="text-blue-600">📞</span>
-                    <a href="tel:+33123456789" className="text-blue-600 hover:underline">
-                      01 23 45 67 89
+                    <a href="tel:+33601598289" className="text-blue-600 hover:underline">
+                      06 01 59 82 89
                     </a>
                   </p>
                   <p className="flex items-center gap-2">

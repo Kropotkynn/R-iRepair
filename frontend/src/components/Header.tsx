@@ -56,10 +56,10 @@ export default function Header() {
           {/* Contact & CTA Desktop */}
           <div className="hidden md:flex items-center space-x-4">
             <a 
-              href="tel:+33123456789" 
+              href="tel:+33601598289" 
               className="text-blue-600 font-semibold hover:text-blue-700 transition-colors duration-300"
             >
-              01 23 45 67 89
+              06 01 59 82 89
             </a>
             <Link 
               href="/repair" 
@@ -135,10 +135,10 @@ export default function Header() {
             
             <div className="px-4 pt-4 border-t border-gray-200">
               <a 
-                href="tel:+33123456789" 
+                href="tel:+33601598289" 
                 className="block w-full text-center bg-blue-100 text-blue-600 py-3 rounded-lg font-semibold mb-2 hover:bg-blue-200 transition-colors duration-300"
               >
-                📞 01 23 45 67 89
+                📞 06 01 59 82 89
               </a>
               <Link 
                 href="/repair" 

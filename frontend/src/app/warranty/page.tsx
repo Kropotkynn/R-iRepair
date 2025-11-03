@@ -170,7 +170,7 @@ export default function WarrantyPage() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Contactez-nous</h3>
               <p className="text-gray-600 leading-relaxed">
-                Appelez-nous au <strong>01 23 45 67 89</strong> ou envoyez un email. 
+                Appelez-nous au <strong>06 01 59 82 89</strong> ou envoyez un email. 
                 Munissez-vous de votre facture de réparation.
               </p>
             </div>
@@ -272,8 +272,8 @@ export default function WarrantyPage() {
             <div>
               <div className="text-3xl mb-2">📞</div>
               <h3 className="font-semibold mb-2">Téléphone</h3>
-              <a href="tel:+33123456789" className="text-blue-100 hover:text-white">
-                01 23 45 67 89
+              <a href="tel:+33601598289" className="text-blue-100 hover:text-white">
+                06 01 59 82 89
               </a>
             </div>
             
@@ -287,10 +287,10 @@ export default function WarrantyPage() {
             
             <div>
               <div className="text-3xl mb-2">📍</div>
-              <h3 className="font-semibold mb-2">Atelier</h3>
+              <h3 className="font-semibold mb-2">Zone d'intervention</h3>
               <p className="text-blue-100">
-                123 Rue de la Réparation<br />
-                75001 Paris
+                Déplacement dans toutes<br />
+                les Yvelines (78)
               </p>
             </div>
           </div>

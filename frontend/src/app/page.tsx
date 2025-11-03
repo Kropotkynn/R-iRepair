@@ -55,10 +55,10 @@ export default function HomePage() {
               Prendre Rendez-vous
             </Link>
             <a 
-              href="tel:+33123456789" 
+              href="tel:+33601598289" 
               className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300"
             >
-              01 23 45 67 89
+              06 01 59 82 89
             </a>
           </div>
         </div>
