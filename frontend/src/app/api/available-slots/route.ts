@@ -1,52 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 
-// Configuration des horaires d'ouverture
-const BUSINESS_HOURS = {
-  start: '09:00',
-  end: '18:00',
-  slotDuration: 60, // minutes
-  breakStart: '12:00',
-  breakEnd: '14:00'
-};
-
-// Générer tous les créneaux horaires possibles
-function generateTimeSlots() {
-  const slots = [];
-  const [startHour, startMinute] = BUSINESS_HOURS.start.split(':').map(Number);
-  const [endHour, endMinute] = BUSINESS_HOURS.end.split(':').map(Number);
-  const [breakStartHour] = BUSINESS_HOURS.breakStart.split(':').map(Number);
-  const [breakEndHour] = BUSINESS_HOURS.breakEnd.split(':').map(Number);
-
+// Générer les créneaux horaires pour une plage donnée
+function generateTimeSlotsForRange(
+  startTime: string,
+  endTime: string,
+  slotDuration: number,
+  breakTime: number = 0
+): string[] {
+  const slots: string[] = [];
+  
+  const [startHour, startMinute] = startTime.split(':').map(Number);
+  const [endHour, endMinute] = endTime.split(':').map(Number);
+  
   let currentHour = startHour;
   let currentMinute = startMinute;
-
-  while (currentHour < endHour || (currentHour === endHour && currentMinute < endMinute)) {
-    // Sauter la pause déjeuner (12h-14h)
-    if (!(currentHour >= breakStartHour && currentHour < breakEndHour)) {
-      const timeString = `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}`;
-      slots.push(timeString);
+  
+  // Convertir l'heure de fin en minutes totales pour faciliter la comparaison
+  const endTotalMinutes = endHour * 60 + endMinute;
+  
+  while (true) {
+    const currentTotalMinutes = currentHour * 60 + currentMinute;
+    
+    // Arrêter si on dépasse l'heure de fin
+    if (currentTotalMinutes >= endTotalMinutes) {
+      break;
     }
-
-    // Ajouter la durée du créneau
-    currentMinute += BUSINESS_HOURS.slotDuration;
+    
+    // Ajouter le créneau actuel
+    const timeString = `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}`;
+    slots.push(timeString);
+    
+    // Ajouter la durée du créneau + pause
+    currentMinute += slotDuration + breakTime;
+    
+    // Gérer le dépassement de 60 minutes
     if (currentMinute >= 60) {
       currentHour += Math.floor(currentMinute / 60);
       currentMinute = currentMinute % 60;
     }
   }
-
+  
   return slots;
 }
 
-// Vérifier si une date est un jour ouvrable (lundi à samedi)
-function isBusinessDay(date: Date) {
-  const dayOfWeek = date.getDay(); // 0 = dimanche, 1 = lundi, ..., 6 = samedi
-  return dayOfWeek >= 1 && dayOfWeek <= 6; // Lundi à samedi
-}
-
 // Vérifier si une date est dans le passé
-function isDateInPast(date: Date) {
+function isDateInPast(date: Date): boolean {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const checkDate = new Date(date);
@@ -94,25 +93,58 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Vérifier si c'est un jour ouvrable
-    if (!isBusinessDay(selectedDate)) {
+    // Obtenir le jour de la semaine (0 = dimanche, 1 = lundi, ..., 6 = samedi)
+    const dayOfWeek = selectedDate.getDay();
+
+    // Récupérer les créneaux configurés pour ce jour depuis la base de données
+    const scheduleSlots = await query(
+      `SELECT 
+        id,
+        start_time,
+        end_time,
+        slot_duration,
+        break_time,
+        is_available
+       FROM schedule_slots
+       WHERE day_of_week = $1 AND is_available = true
+       ORDER BY start_time`,
+      [dayOfWeek]
+    );
+
+    // Si aucun créneau configuré pour ce jour, le magasin est fermé
+    if (scheduleSlots.rows.length === 0) {
+      // Message spécifique pour le dimanche (jour 0)
+      const reason = dayOfWeek === 0 ? 'Fermé le dimanche' : 'Fermé ce jour';
+      
       return NextResponse.json({
         success: true,
         data: {
           isOpen: false,
-          reason: 'Fermé le dimanche',
+          reason,
           availableSlots: []
         }
       });
     }
 
-    // Générer tous les créneaux possibles
-    const allSlots = generateTimeSlots();
+    // Générer tous les créneaux possibles pour ce jour
+    const allSlots: string[] = [];
+    
+    for (const slot of scheduleSlots.rows) {
+      const slotsForRange = generateTimeSlotsForRange(
+        slot.start_time,
+        slot.end_time,
+        slot.slot_duration || 60,
+        slot.break_time || 0
+      );
+      allSlots.push(...slotsForRange);
+    }
 
     // Récupérer les rendez-vous existants pour cette date
     const existingAppointments = await query(
-      `SELECT appointment_time FROM appointments
-       WHERE appointment_date = $1 AND status IN ('pending', 'confirmed')`,
+      `SELECT appointment_time 
+       FROM appointments
+       WHERE appointment_date = $1 
+       AND status IN ('pending', 'confirmed')`,
       [dateParam]
     );
 
@@ -124,30 +156,37 @@ export async function GET(request: NextRequest) {
     // Filtrer les créneaux disponibles
     const availableSlots = allSlots.filter(slot => !takenSlots.has(slot));
 
-    // Pour les dates futures, limiter à 7 jours à l'avance maximum
+    // Pour les dates futures, limiter à 30 jours à l'avance maximum
     const maxDate = new Date();
-    maxDate.setDate(maxDate.getDate() + 7);
+    maxDate.setDate(maxDate.getDate() + 30);
 
     if (selectedDate > maxDate) {
       return NextResponse.json({
         success: true,
         data: {
           isOpen: false,
-          reason: 'Réservation limitée à 7 jours à l\'avance',
+          reason: 'Réservation limitée à 30 jours à l\'avance',
           availableSlots: []
         }
       });
     }
 
+    // Retourner les créneaux disponibles
     return NextResponse.json({
       success: true,
       data: {
         isOpen: true,
         date: dateParam,
+        dayOfWeek,
         availableSlots,
         totalSlots: allSlots.length,
         takenSlots: takenSlots.size,
-        businessHours: BUSINESS_HOURS
+        scheduleInfo: scheduleSlots.rows.map(slot => ({
+          startTime: slot.start_time,
+          endTime: slot.end_time,
+          slotDuration: slot.slot_duration,
+          breakTime: slot.break_time
+        }))
       }
     });
 
