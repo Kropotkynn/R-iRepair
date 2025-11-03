@@ -279,9 +279,11 @@ function AppointmentsContent() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <Link href="/" className="flex items-center space-x-2">
-                <div className="bg-blue-600 p-2 rounded-lg">
-                  <span className="text-white text-lg font-bold">R</span>
-                </div>
+                <img 
+                  src="/logo.svg" 
+                  alt="R iRepair Logo" 
+                  className="h-10 w-auto"
+                />
                 <div>
                   <h1 className="text-xl font-bold text-gray-900">R iRepair Admin</h1>
                 </div>
