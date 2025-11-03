@@ -185,8 +185,8 @@ export default function Footer() {
               <div className="flex items-center space-x-3">
                 <div className="text-blue-400">🕒</div>
                 <div className="text-gray-300">
-                  <p className="text-sm">Lun - Ven: 9h - 19h</p>
-                  <p className="text-sm">Sam: 9h - 17h</p>
+                  <p className="text-sm">Mar - Dim: 10h - 20h</p>
+                  <p className="text-sm">Fermé le Lundi</p>
                 </div>
               </div>
             </div>

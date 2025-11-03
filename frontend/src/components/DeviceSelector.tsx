@@ -171,6 +171,10 @@ export default function DeviceSelector({
             <div className="flex justify-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
+          ) : brands.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">À venir</p>
+            </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {brands.map((brand) => (
@@ -211,6 +215,10 @@ export default function DeviceSelector({
           {loading.models ? (
             <div className="flex justify-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : models.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">À venir</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

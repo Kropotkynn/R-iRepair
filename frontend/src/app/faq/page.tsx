@@ -16,7 +16,7 @@ const faqData: FAQItem[] = [
     id: 1,
     category: 'Général',
     question: 'Combien de temps prend une réparation ?',
-    answer: 'La durée dépend du type de réparation. Pour un écran de smartphone : 30 minutes. Pour un ordinateur portable : 2-5 jours. Nous vous donnons toujours un délai précis lors du diagnostic.'
+    answer: 'La durée dépend du type de réparation. Pour un écran de smartphone ou tablette : 30 minutes. Nous vous donnons toujours un délai précis lors du diagnostic.'
   },
   {
     id: 2,
@@ -28,7 +28,7 @@ const faqData: FAQItem[] = [
     id: 3,
     category: 'Général',
     question: 'Quelles marques réparez-vous ?',
-    answer: 'Nous réparons toutes les marques : Apple, Samsung, Xiaomi, Huawei, Google, Dell, HP, Lenovo, Asus, Sony, Microsoft, Nintendo, et bien d\'autres.'
+    answer: 'Nous réparons toutes les marques de smartphones et tablettes : Apple, Samsung, Xiaomi, Huawei, Google, Sony, OnePlus, Oppo, et bien d\'autres.'
   },
   {
     id: 4,
@@ -68,43 +68,37 @@ const faqData: FAQItem[] = [
   },
   {
     id: 10,
-    category: 'Ordinateurs',
-    question: 'Réparez-vous les ordinateurs infectés par des virus ?',
-    answer: 'Oui, nous proposons un service de désinfection complète : suppression des malwares, optimisation du système, et installation d\'un antivirus.'
+    category: 'Tablettes',
+    question: 'Réparez-vous les tablettes ?',
+    answer: 'Oui, nous réparons toutes les marques de tablettes : iPad, Samsung Galaxy Tab, Huawei, Lenovo, etc. Écran, batterie, connecteurs et autres composants.'
   },
   {
     id: 11,
-    category: 'Ordinateurs',
-    question: 'Mon ordinateur est très lent, que pouvez-vous faire ?',
-    answer: 'Nous diagnostiquons la cause (virus, disque dur défaillant, RAM insuffisante) et proposons la solution adaptée : nettoyage, remplacement de composants, ou mise à niveau.'
-  },
-  {
-    id: 12,
     category: 'Pièces',
     question: 'Utilisez-vous des pièces d\'origine ?',
     answer: 'Nous proposons tous types de qualité de pièces selon vos besoins et votre budget. 95% des pièces sont disponibles le jour même. Toutes nos pièces sont garanties 6 mois.'
   },
   {
-    id: 13,
+    id: 12,
     category: 'Pièces',
     question: 'Puis-je fournir ma propre pièce ?',
     answer: 'Oui, mais dans ce cas nous ne garantissons que la main d\'œuvre. Nous vérifions toujours la compatibilité de la pièce avant installation.'
   },
   {
-    id: 14,
+    id: 13,
     category: 'Rendez-vous',
     question: 'Comment prendre rendez-vous ?',
     answer: 'Vous pouvez prendre rendez-vous en ligne sur notre site ou par téléphone au 06 01 59 82 89.'
   },
   {
-    id: 15,
+    id: 14,
     category: 'Rendez-vous',
-    question: 'Puis-je venir sans rendez-vous ?',
-    answer: 'Oui, mais nous recommandons la prise de rendez-vous pour éviter l\'attente. Les clients avec RDV sont prioritaires.'
+    question: 'Quels sont vos horaires ?',
+    answer: 'Nous sommes ouverts du Mardi au Dimanche de 10h00 à 20h00. Fermé le Lundi.'
   }
 ];
 
-const categories = ['Tous', 'Général', 'Garantie', 'Prix', 'Smartphones', 'Ordinateurs', 'Pièces', 'Rendez-vous'];
+const categories = ['Tous', 'Général', 'Garantie', 'Prix', 'Smartphones', 'Tablettes', 'Pièces', 'Rendez-vous'];
 
 export default function FAQPage() {
   const [activeCategory, setActiveCategory] = useState('Tous');
@@ -253,7 +247,7 @@ export default function FAQPage() {
                 <a href="tel:+33601598289" className="text-blue-100 hover:text-white transition-colors">
                   06 01 59 82 89
                 </a>
-                <p className="text-blue-200 text-sm mt-1">Lun-Ven: 9h-19h</p>
+                <p className="text-blue-200 text-sm mt-1">Mar-Dim: 10h-20h</p>
               </div>
               
               <div>

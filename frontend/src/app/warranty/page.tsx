@@ -208,7 +208,7 @@ export default function WarrantyPage() {
             <p className="text-lg text-gray-600">Couverture adaptée à chaque type d'appareil</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
             <div className="bg-white rounded-lg shadow p-6 text-center">
               <div className="text-3xl mb-3">📱</div>
               <h3 className="font-semibold text-gray-900 mb-2">Smartphones</h3>
@@ -222,18 +222,6 @@ export default function WarrantyPage() {
             </div>
 
             <div className="bg-white rounded-lg shadow p-6 text-center">
-              <div className="text-3xl mb-3">💻</div>
-              <h3 className="font-semibold text-gray-900 mb-2">Ordinateurs</h3>
-              <div className="text-blue-600 font-bold text-lg mb-2">6 mois</div>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Écran LCD</li>
-                <li>• Clavier</li>
-                <li>• Ventilateurs</li>
-                <li>• Composants</li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-lg shadow p-6 text-center">
               <div className="text-3xl mb-3">📲</div>
               <h3 className="font-semibold text-gray-900 mb-2">Tablettes</h3>
               <div className="text-blue-600 font-bold text-lg mb-2">6 mois</div>
@@ -242,18 +230,6 @@ export default function WarrantyPage() {
                 <li>• Batterie</li>
                 <li>• Connecteurs</li>
                 <li>• Boutons</li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-lg shadow p-6 text-center">
-              <div className="text-3xl mb-3">🎮</div>
-              <h3 className="font-semibold text-gray-900 mb-2">Consoles</h3>
-              <div className="text-blue-600 font-bold text-lg mb-2">6 mois</div>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Lecteur optique</li>
-                <li>• Ventilateurs</li>
-                <li>• Connecteurs</li>
-                <li>• Manettes</li>
               </ul>
             </div>
           </div>
@@ -297,7 +273,7 @@ export default function WarrantyPage() {
 
           <div className="bg-blue-700 rounded-lg p-6">
             <p className="text-blue-100 text-sm">
-              <strong>Horaires d'ouverture :</strong> Lundi - Vendredi: 9h - 19h • Samedi: 9h - 17h • Dimanche: Fermé
+              <strong>Horaires d'ouverture :</strong> Mardi - Dimanche: 10h - 20h • Fermé le Lundi
             </p>
           </div>
         </div>

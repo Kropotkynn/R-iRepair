@@ -112,11 +112,11 @@ export default function AboutPage() {
               <div className="bg-gray-200 w-32 h-32 rounded-full mx-auto mb-4 flex items-center justify-center">
                 <span className="text-4xl">👨‍🔧</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Marc Dubois</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Ouguerroudj Rahim</h3>
               <p className="text-blue-600 mb-3">Fondateur & Technicien Senior</p>
               <p className="text-gray-600 text-sm">
                 15 ans d'expérience en réparation électronique. 
-                Spécialiste des appareils Apple et Samsung.
+                Spécialiste des smartphones et tablettes toutes marques.
               </p>
             </div>
 
