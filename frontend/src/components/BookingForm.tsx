@@ -19,6 +19,7 @@ export default function BookingForm({ prefilledData, onSubmit }: BookingFormProp
     customerName: '',
     customerPhone: '',
     customerEmail: '',
+    customerAddress: '',
     deviceType: prefilledData.deviceType,
     brand: prefilledData.brand,
     model: prefilledData.model,
@@ -118,6 +119,12 @@ export default function BookingForm({ prefilledData, onSubmit }: BookingFormProp
       newErrors.customerEmail = 'L\'email est requis';
     } else if (!validateEmail(formData.customerEmail)) {
       newErrors.customerEmail = 'Adresse email invalide';
+    }
+
+    if (!formData.customerAddress.trim()) {
+      newErrors.customerAddress = 'L\'adresse est requise pour la réparation à domicile';
+    } else if (formData.customerAddress.trim().length < 10) {
+      newErrors.customerAddress = 'Veuillez fournir une adresse complète';
     }
 
     if (!formData.appointmentDate) {
@@ -319,6 +326,31 @@ export default function BookingForm({ prefilledData, onSubmit }: BookingFormProp
             {errors.customerEmail && (
               <p className="mt-1 text-sm text-red-600">{errors.customerEmail}</p>
             )}
+          </div>
+
+          <div>
+            <label htmlFor="customerAddress" className="block text-sm font-medium text-gray-700 mb-2">
+              <span className="flex items-center gap-2">
+                📍 Adresse complète *
+                <span className="text-xs text-gray-500 font-normal">(pour la réparation à domicile)</span>
+              </span>
+            </label>
+            <textarea
+              id="customerAddress"
+              value={formData.customerAddress}
+              onChange={(e) => handleInputChange('customerAddress', e.target.value)}
+              rows={3}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-vertical ${
+                errors.customerAddress ? 'border-red-300' : 'border-gray-300'
+              }`}
+              placeholder="Numéro, rue, code postal, ville&#10;Exemple: 15 rue de la République, 75001 Paris"
+            />
+            {errors.customerAddress && (
+              <p className="mt-1 text-sm text-red-600">{errors.customerAddress}</p>
+            )}
+            <p className="text-sm text-gray-500 mt-1">
+              💡 Notre technicien se déplacera à cette adresse pour effectuer la réparation
+            </p>
           </div>
         </div>
 

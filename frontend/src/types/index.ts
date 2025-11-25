@@ -37,6 +37,11 @@ export interface Appointment {
   customerName: string;
   customerPhone: string;
   customerEmail: string;
+  customerAddress?: string; // Adresse complète
+  customerStreet?: string; // Rue et numéro
+  customerCity?: string; // Ville
+  customerPostalCode?: string; // Code postal
+  customerCountry?: string; // Pays
   deviceType: string;
   brand: string;
   model: string;
@@ -71,6 +76,11 @@ export interface BookingFormData {
   customerName: string;
   customerPhone: string;
   customerEmail: string;
+  customerAddress: string; // Adresse complète (obligatoire pour réparation à domicile)
+  customerStreet?: string; // Rue et numéro (optionnel si adresse complète fournie)
+  customerCity?: string; // Ville
+  customerPostalCode?: string; // Code postal
+  customerCountry?: string; // Pays
   deviceType: string;
   brand: string;
   model: string;

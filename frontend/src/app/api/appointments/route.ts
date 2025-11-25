@@ -18,6 +18,11 @@ export async function GET(request: NextRequest) {
         a.customer_name,
         a.customer_phone,
         a.customer_email,
+        a.customer_address,
+        a.customer_street,
+        a.customer_city,
+        a.customer_postal_code,
+        a.customer_country,
         a.device_type_id,
         a.brand_id,
         a.model_id,
@@ -74,6 +79,11 @@ export async function GET(request: NextRequest) {
       customerName: row.customer_name,
       customerPhone: row.customer_phone,
       customerEmail: row.customer_email,
+      customerAddress: row.customer_address,
+      customerStreet: row.customer_street,
+      customerCity: row.customer_city,
+      customerPostalCode: row.customer_postal_code,
+      customerCountry: row.customer_country,
       deviceTypeId: row.device_type_id,
       brandId: row.brand_id,
       modelId: row.model_id,
@@ -152,6 +162,11 @@ export async function POST(request: NextRequest) {
       customer_name,
       customer_phone,
       customer_email,
+      customer_address,
+      customer_street,
+      customer_city,
+      customer_postal_code,
+      customer_country,
       device_type_id,
       brand_id,
       model_id,
@@ -173,6 +188,16 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: 'Les informations client sont requises'
+        },
+        { status: 400 }
+      );
+    }
+
+    if (!customer_address) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'L\'adresse est requise pour la réparation à domicile'
         },
         { status: 400 }
       );
@@ -221,15 +246,17 @@ export async function POST(request: NextRequest) {
     const result = await query(
       `INSERT INTO appointments (
         customer_name, customer_phone, customer_email,
+        customer_address, customer_street, customer_city, customer_postal_code, customer_country,
         device_type_id, brand_id, model_id, repair_service_id,
         device_type_name, brand_name, model_name, repair_service_name,
         description, appointment_date, appointment_time,
         status, urgency, estimated_price, created_at, updated_at
       ) VALUES (
-        \$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13, \$14, \$15, \$16, \$17, NOW(), NOW()
+        \$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11, \$12, \$13, \$14, \$15, \$16, \$17, \$18, \$19, \$20, \$21, \$22, NOW(), NOW()
       ) RETURNING *`,
       [
         customer_name, customer_phone, customer_email,
+        customer_address, customer_street, customer_city, customer_postal_code, customer_country,
         finalDeviceTypeId, finalBrandId, finalModelId, finalRepairServiceId,
         device_type_name, brand_name, model_name, repair_service_name,
         description, appointment_date, appointment_time,
@@ -245,6 +272,11 @@ export async function POST(request: NextRequest) {
         customerName: appointment.customer_name,
         customerPhone: appointment.customer_phone,
         customerEmail: appointment.customer_email,
+        customerAddress: appointment.customer_address,
+        customerStreet: appointment.customer_street,
+        customerCity: appointment.customer_city,
+        customerPostalCode: appointment.customer_postal_code,
+        customerCountry: appointment.customer_country,
         deviceTypeId: appointment.device_type_id,
         brandId: appointment.brand_id,
         modelId: appointment.model_id,
