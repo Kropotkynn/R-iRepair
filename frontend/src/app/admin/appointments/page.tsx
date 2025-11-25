@@ -431,6 +431,11 @@ function AppointmentsContent() {
                           <div className="text-sm text-gray-500">
                             {appointment.customerPhone}
                           </div>
+                          {appointment.customerAddress && (
+                            <div className="text-sm text-gray-500 mt-1">
+                              📍 {appointment.customerAddress}
+                            </div>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -517,6 +522,18 @@ function AppointmentsContent() {
                   <p className="text-sm text-gray-600">Nom: {selectedAppointment.customerName}</p>
                   <p className="text-sm text-gray-600">Email: {selectedAppointment.customerEmail}</p>
                   <p className="text-sm text-gray-600">Téléphone: {selectedAppointment.customerPhone}</p>
+                  {selectedAppointment.customerAddress && (
+                    <div className="mt-2 p-3 bg-blue-50 rounded-lg">
+                      <p className="text-sm font-medium text-gray-900 mb-1">📍 Adresse de réparation à domicile:</p>
+                      <p className="text-sm text-gray-700">{selectedAppointment.customerAddress}</p>
+                      {selectedAppointment.customerCity && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Ville: {selectedAppointment.customerCity}
+                          {selectedAppointment.customerPostalCode && ` • CP: ${selectedAppointment.customerPostalCode}`}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
                 
                 <div>
