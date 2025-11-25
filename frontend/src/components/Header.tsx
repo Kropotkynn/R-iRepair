@@ -42,10 +42,10 @@ export default function Header() {
               Réparations
             </Link>
             <Link 
-              href="/#services" 
+              href="/avant-apres" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-300"
             >
-              Services
+              Avant/Après
             </Link>
             <a 
               href="mailto:r.irepair@outlook.fr" 
@@ -121,11 +121,11 @@ export default function Header() {
               Réparations
             </Link>
             <Link 
-              href="/#services" 
+              href="/avant-apres" 
               className="block px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg font-medium transition-colors duration-300"
               onClick={() => setIsMenuOpen(false)}
             >
-              Services
+              Avant/Après
             </Link>
             <a 
               href="mailto:r.irepair@outlook.fr" 
