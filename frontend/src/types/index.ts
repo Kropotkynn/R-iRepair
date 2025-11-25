@@ -197,3 +197,36 @@ export interface ScheduleFormData {
   slotDuration: number;
   breakTime: number;
 }
+
+// Types pour les photos avant/après
+export interface RepairPhoto {
+  id: string;
+  appointmentId: string;
+  photoType: 'before' | 'after';
+  photoUrl: string;
+  photoOrder: number;
+  uploadedBy: string;
+  uploadedAt: string;
+  fileSize: number;
+  fileName: string;
+  thumbnailUrl?: string;
+}
+
+export interface BeforeAfterSet {
+  appointmentId: string;
+  deviceType: string;
+  brand: string;
+  model: string;
+  repairService: string;
+  beforePhotos: RepairPhoto[];
+  afterPhotos: RepairPhoto[];
+  completedAt: string;
+  customerName?: string; // Anonymisé pour galerie publique
+}
+
+export interface PhotoUploadResponse {
+  success: boolean;
+  photo?: RepairPhoto;
+  message?: string;
+  error?: string;
+}
