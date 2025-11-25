@@ -7,6 +7,7 @@ import { Appointment } from '@/types';
 import { AdminProvider, useRequireAuth, useAdmin } from '@/lib/AdminContext';
 import { formatDate, formatDateTime, getStatusColor, getStatusText } from '@/lib/utils';
 import { ConfirmModal, Toast } from '@/components/ui/modal';
+import BeforeAfterUpload from '@/components/BeforeAfterUpload';
 
 function AppointmentsContent() {
   const { isAuthenticated, loading, user } = useRequireAuth();
@@ -570,6 +571,18 @@ function AppointmentsContent() {
                   {selectedAppointment.notes && (
                     <p className="text-sm text-gray-600">Notes: {selectedAppointment.notes}</p>
                   )}
+                </div>
+
+                {/* Section Photos Avant/Après */}
+                <div className="border-t pt-4">
+                  <BeforeAfterUpload
+                    appointmentId={selectedAppointment.id}
+                    uploadedBy={user?.username || 'admin'}
+                    onPhotosChange={(photos) => {
+                      console.log('Photos mises à jour:', photos);
+                      showToast(`${photos.before.length + photos.after.length} photo(s) uploadée(s)`, 'success');
+                    }}
+                  />
                 </div>
               </div>
 
