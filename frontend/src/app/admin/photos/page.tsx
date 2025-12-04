@@ -223,12 +223,23 @@ export default function AdminPhotosPage() {
     if (!editingPhoto) return;
 
     try {
+      // Mapper les noms de champs du formulaire vers ceux attendus par l'API
+      const apiData = {
+        deviceInfo: editForm.device_info,
+        deviceType: editForm.device_type,
+        deviceBrand: editForm.device_brand,
+        deviceModel: editForm.device_model,
+        repairDescription: editForm.repair_description,
+        repairDate: editForm.repair_date,
+        isPublic: editForm.is_public
+      };
+
       const response = await fetch(`/api/gallery/photos/${editingPhoto.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(editForm),
+        body: JSON.stringify(apiData),
       });
 
       if (response.ok) {
