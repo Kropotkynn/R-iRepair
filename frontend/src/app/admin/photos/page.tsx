@@ -236,7 +236,7 @@ export default function AdminPhotosPage() {
                   {beforePhotos.map((photo) => (
                     <div key={photo.id} className="relative group">
                       <img
-                        src={photo.photo_url}
+                        src={`/api${photo.photo_url}`}
                         alt={`Avant ${photo.photo_order}`}
                         className="w-full h-40 object-cover rounded-lg"
                       />
@@ -270,7 +270,7 @@ export default function AdminPhotosPage() {
                   {afterPhotos.map((photo) => (
                     <div key={photo.id} className="relative group">
                       <img
-                        src={photo.photo_url}
+                        src={`/api${photo.photo_url}`}
                         alt={`Après ${photo.photo_order}`}
                         className="w-full h-40 object-cover rounded-lg"
                       />

@@ -243,7 +243,7 @@ export default function AvantApresPage() {
                             onClick={() => openLightbox(set, index)}
                           >
                             <img
-                              src={photo.photoUrl}
+                              src={`/api${photo.photoUrl}`}
                               alt={`Avant ${index + 1}`}
                               className="w-full h-full object-cover rounded-lg"
                               onError={(e) => {
@@ -271,7 +271,7 @@ export default function AvantApresPage() {
                             onClick={() => openLightbox(set, set.before.length + index)}
                           >
                             <img
-                              src={photo.photoUrl}
+                              src={`/api${photo.photoUrl}`}
                               alt={`Après ${index + 1}`}
                               className="w-full h-full object-cover rounded-lg"
                               onError={(e) => {
@@ -352,8 +352,8 @@ export default function AvantApresPage() {
             <img
               src={
                 selectedIndex < selectedSet.before.length
-                  ? selectedSet.before[selectedIndex].photoUrl
-                  : selectedSet.after[selectedIndex - selectedSet.before.length].photoUrl
+                  ? `/api${selectedSet.before[selectedIndex].photoUrl}`
+                  : `/api${selectedSet.after[selectedIndex - selectedSet.before.length].photoUrl}`
               }
               alt="Photo agrandie"
               className="w-full h-auto rounded-lg"
