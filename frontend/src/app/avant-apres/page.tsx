@@ -34,9 +34,58 @@ export default function AvantApresPage() {
 
   const fetchPhotos = async () => {
     try {
-      // TODO: Implémenter l'API pour récupérer toutes les photos publiques
-      // Pour l'instant, données de démonstration
-      const demoData: BeforeAfterSet[] = [
+      // Récupérer les photos publiques depuis la nouvelle API
+      const response = await fetch('/api/gallery/photos?isPublic=true&limit=100');
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors du chargement des photos');
+      }
+      
+      const data = await response.json();
+      
+      // Regrouper les photos par device_info
+      const photosByDevice: { [key: string]: BeforeAfterSet } = {};
+      
+      data.data.forEach((photo: any) => {
+        const deviceKey = photo.device_info || 'unknown';
+        
+        if (!photosByDevice[deviceKey]) {
+          photosByDevice[deviceKey] = {
+            appointmentId: deviceKey,
+            deviceType: photo.device_type || photo.device_info,
+            repairDate: photo.repair_date || photo.uploaded_at,
+            before: [],
+            after: []
+          };
+        }
+        
+        const photoData: RepairPhoto = {
+          id: photo.id,
+          appointmentId: deviceKey,
+          photoType: photo.photo_type,
+          photoUrl: photo.photo_url,
+          photoOrder: photo.photo_order,
+          uploadedAt: photo.uploaded_at,
+          fileName: photo.file_name
+        };
+        
+        if (photo.photo_type === 'before') {
+          photosByDevice[deviceKey].before.push(photoData);
+        } else {
+          photosByDevice[deviceKey].after.push(photoData);
+        }
+      });
+      
+      // Convertir en tableau et filtrer les sets incomplets
+      const photoSets = Object.values(photosByDevice).filter(
+        set => set.before.length > 0 && set.after.length > 0
+      );
+      
+      setPhotos(photoSets);
+      
+      // Si aucune photo, afficher les données de démo
+      if (photoSets.length === 0) {
+        const demoData: BeforeAfterSet[] = [
         {
           appointmentId: 'demo-1',
           deviceType: 'iPhone 12 Pro',
@@ -62,9 +111,9 @@ export default function AvantApresPage() {
             }
           ]
         }
-      ];
-      
-      setPhotos(demoData);
+        ];
+        setPhotos(demoData);
+      }
     } catch (error) {
       console.error('Erreur lors du chargement des photos:', error);
     } finally {

@@ -28,8 +28,8 @@ export default function AdminPhotosPage() {
   const fetchAllPhotos = async () => {
     setLoading(true);
     try {
-      // Récupérer toutes les photos
-      const response = await fetch('/api/repairs/photos');
+      // Récupérer toutes les photos depuis la nouvelle API
+      const response = await fetch('/api/gallery/photos');
       if (response.ok) {
         const data = await response.json();
         setPhotos(data.data || []);
@@ -54,12 +54,12 @@ export default function AdminPhotosPage() {
       const uploadPromises = Array.from(files).map(async (file, index) => {
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('appointmentId', 'general'); // ID générique
         formData.append('photoType', photoType);
         formData.append('photoOrder', String(index + 1));
         formData.append('uploadedBy', 'admin');
+        formData.append('isPublic', 'true');
 
-        const response = await fetch('/api/repairs/photos', {
+        const response = await fetch('/api/gallery/photos', {
           method: 'POST',
           body: formData,
         });
@@ -87,7 +87,7 @@ export default function AdminPhotosPage() {
     if (!confirm('Êtes-vous sûr de vouloir supprimer cette photo ?')) return;
 
     try {
-      const response = await fetch(`/api/repairs/photos/${photoId}`, {
+      const response = await fetch(`/api/gallery/photos/${photoId}`, {
         method: 'DELETE',
       });
 
