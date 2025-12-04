@@ -189,6 +189,23 @@ export default function AdminPhotosPage() {
       repair_description: photo.repair_description || '',
       is_public: photo.is_public !== false
     });
+    
+    // Filtrer les marques et modèles selon les valeurs actuelles
+    if (photo.device_type) {
+      const selectedType = deviceTypes.find(t => t.name === photo.device_type);
+      if (selectedType) {
+        const brandsForType = deviceBrands.filter(b => b.device_type_id === selectedType.id);
+        setFilteredBrands(brandsForType);
+        
+        if (photo.device_brand) {
+          const selectedBrand = deviceBrands.find(b => b.name === photo.device_brand);
+          if (selectedBrand) {
+            const modelsForBrand = deviceModels.filter(m => m.brand_id === selectedBrand.id);
+            setFilteredModels(modelsForBrand);
+          }
+        }
+      }
+    }
   };
 
   const handleSaveEdit = async () => {
