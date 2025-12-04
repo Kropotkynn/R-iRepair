@@ -95,21 +95,27 @@ export default function AdminPhotosPage() {
       const typesRes = await fetch('/api/devices/types');
       if (typesRes.ok) {
         const typesData = await typesRes.json();
-        setDeviceTypes(Array.isArray(typesData) ? typesData : []);
+        // L'API retourne {success: true, data: [...]}
+        const types = typesData.data || typesData;
+        setDeviceTypes(Array.isArray(types) ? types : []);
       }
 
       // Récupérer les marques
       const brandsRes = await fetch('/api/devices/brands');
       if (brandsRes.ok) {
         const brandsData = await brandsRes.json();
-        setDeviceBrands(Array.isArray(brandsData) ? brandsData : []);
+        // L'API retourne {success: true, data: [...]}
+        const brands = brandsData.data || brandsData;
+        setDeviceBrands(Array.isArray(brands) ? brands : []);
       }
 
       // Récupérer les modèles
       const modelsRes = await fetch('/api/devices/models');
       if (modelsRes.ok) {
         const modelsData = await modelsRes.json();
-        setDeviceModels(Array.isArray(modelsData) ? modelsData : []);
+        // L'API retourne {success: true, data: [...]}
+        const models = modelsData.data || modelsData;
+        setDeviceModels(Array.isArray(models) ? models : []);
       }
     } catch (error) {
       console.error('Erreur lors du chargement des données appareils:', error);
