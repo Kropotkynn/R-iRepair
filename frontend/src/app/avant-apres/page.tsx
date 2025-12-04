@@ -218,15 +218,27 @@ export default function AvantApresPage() {
                     className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
                   >
                     {/* Device Info */}
-                    <div className="p-4 bg-gray-50 border-b">
-                      <h3 className="font-semibold text-gray-900">
-                        {set.deviceType || 'Appareil'}
-                      </h3>
-                      {set.repairDate && (
-                        <p className="text-sm text-gray-500">
-                          {new Date(set.repairDate).toLocaleDateString('fr-FR')}
-                        </p>
-                      )}
+                    <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 border-b">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-bold text-gray-900 text-lg mb-1">
+                            {set.deviceType || 'Appareil'}
+                          </h3>
+                          {set.repairDate && (
+                            <p className="text-sm text-blue-600 font-medium flex items-center gap-1">
+                              <span>📅</span>
+                              {new Date(set.repairDate).toLocaleDateString('fr-FR', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric'
+                              })}
+                            </p>
+                          )}
+                        </div>
+                        <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                          {set.before.length + set.after.length} photos
+                        </div>
+                      </div>
                     </div>
 
                     {/* Before/After Grid */}
