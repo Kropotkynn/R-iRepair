@@ -59,10 +59,10 @@ ENV PORT 3000
 
 # Copie des fichiers de production
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
 
-# Copie du build Next.js optimisé
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Copie du build Next.js complet
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 
 # Copier le dossier public avec tous les assets (logo, images, etc.)
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
@@ -110,7 +110,7 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD node /app/healthcheck.js
 
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
 
 # Labels
 LABEL maintainer="R iRepair <dev@rirepair.com>"

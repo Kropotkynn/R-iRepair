@@ -21,9 +21,6 @@ const nextConfig = {
   // PAS de rewrites - Les routes API sont gérées par Next.js directement
   // Les routes API sont dans src/app/api/
   
-  // Configuration pour le serveur
-  output: 'standalone',
-  
   // Optimisations
   swcMinify: true,
   compress: true,
