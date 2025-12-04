@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 
 interface RepairPhoto {
   id: string;
-  appointmentId: string;
-  photoType: 'before' | 'after';
-  photoUrl: string;
-  photoOrder: number;
-  uploadedAt: string;
-  fileName?: string;
-  fileSize?: number;
+  photo_type: 'before' | 'after';
+  photo_url: string;
+  photo_order: number;
+  uploaded_at: string;
+  file_name?: string;
+  file_size?: number;
+  device_info?: string;
+  repair_description?: string;
 }
 
 export default function AdminPhotosPage() {
@@ -103,8 +104,8 @@ export default function AdminPhotosPage() {
     }
   };
 
-  const beforePhotos = photos.filter(p => p.photoType === 'before');
-  const afterPhotos = photos.filter(p => p.photoType === 'after');
+  const beforePhotos = photos.filter(p => p.photo_type === 'before');
+  const afterPhotos = photos.filter(p => p.photo_type === 'after');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -235,8 +236,8 @@ export default function AdminPhotosPage() {
                   {beforePhotos.map((photo) => (
                     <div key={photo.id} className="relative group">
                       <img
-                        src={photo.photoUrl}
-                        alt={`Avant ${photo.photoOrder}`}
+                        src={photo.photo_url}
+                        alt={`Avant ${photo.photo_order}`}
                         className="w-full h-40 object-cover rounded-lg"
                       />
                       <button
@@ -246,8 +247,8 @@ export default function AdminPhotosPage() {
                         🗑️
                       </button>
                       <div className="mt-2 text-xs text-gray-500">
-                        {photo.fileName}
-                        {photo.fileSize && ` (${(photo.fileSize / 1024).toFixed(1)} KB)`}
+                        {photo.file_name}
+                        {photo.file_size && ` (${(photo.file_size / 1024).toFixed(1)} KB)`}
                       </div>
                     </div>
                   ))}
@@ -269,8 +270,8 @@ export default function AdminPhotosPage() {
                   {afterPhotos.map((photo) => (
                     <div key={photo.id} className="relative group">
                       <img
-                        src={photo.photoUrl}
-                        alt={`Après ${photo.photoOrder}`}
+                        src={photo.photo_url}
+                        alt={`Après ${photo.photo_order}`}
                         className="w-full h-40 object-cover rounded-lg"
                       />
                       <button
@@ -280,8 +281,8 @@ export default function AdminPhotosPage() {
                         🗑️
                       </button>
                       <div className="mt-2 text-xs text-gray-500">
-                        {photo.fileName}
-                        {photo.fileSize && ` (${(photo.fileSize / 1024).toFixed(1)} KB)`}
+                        {photo.file_name}
+                        {photo.file_size && ` (${(photo.file_size / 1024).toFixed(1)} KB)`}
                       </div>
                     </div>
                   ))}
