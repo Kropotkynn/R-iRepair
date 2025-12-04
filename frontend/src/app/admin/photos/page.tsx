@@ -67,9 +67,11 @@ export default function AdminPhotosPage() {
       if (selectedBrand) {
         const modelsForBrand = deviceModels.filter(m => m.brand_id === selectedBrand.id);
         setFilteredModels(modelsForBrand);
+      } else {
+        setFilteredModels([]);
       }
     } else {
-      setFilteredModels(deviceModels);
+      setFilteredModels([]);
     }
   }, [editForm.device_brand, deviceBrands, deviceModels]);
 
@@ -552,9 +554,17 @@ export default function AdminPhotosPage() {
                         </option>
                       ))}
                     </select>
-                    {!editForm.device_brand && (
+                    {!editForm.device_brand ? (
                       <p className="text-xs text-gray-500 mt-1">
                         Sélectionnez d'abord une marque
+                      </p>
+                    ) : filteredModels.length === 0 ? (
+                      <p className="text-xs text-orange-600 mt-1">
+                        Aucun modèle trouvé pour cette marque
+                      </p>
+                    ) : (
+                      <p className="text-xs text-green-600 mt-1">
+                        {filteredModels.length} modèle(s) disponible(s)
                       </p>
                     )}
                   </div>
