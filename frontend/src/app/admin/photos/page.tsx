@@ -36,10 +36,42 @@ export default function AdminPhotosPage() {
     repair_description: '',
     is_public: true
   });
+  const [deviceTypes, setDeviceTypes] = useState<any[]>([]);
+  const [deviceBrands, setDeviceBrands] = useState<any[]>([]);
+  const [deviceModels, setDeviceModels] = useState<any[]>([]);
+  const [filteredBrands, setFilteredBrands] = useState<any[]>([]);
+  const [filteredModels, setFilteredModels] = useState<any[]>([]);
 
   useEffect(() => {
     fetchAllPhotos();
+    fetchDeviceData();
   }, []);
+
+  useEffect(() => {
+    // Filtrer les marques selon le type sélectionné
+    if (editForm.device_type) {
+      const selectedType = deviceTypes.find(t => t.name === editForm.device_type);
+      if (selectedType) {
+        const brandsForType = deviceBrands.filter(b => b.device_type_id === selectedType.id);
+        setFilteredBrands(brandsForType);
+      }
+    } else {
+      setFilteredBrands(deviceBrands);
+    }
+  }, [editForm.device_type, deviceTypes, deviceBrands]);
+
+  useEffect(() => {
+    // Filtrer les modèles selon la marque sélectionnée
+    if (editForm.device_brand) {
+      const selectedBrand = deviceBrands.find(b => b.name === editForm.device_brand);
+      if (selectedBrand) {
+        const modelsForBrand = deviceModels.filter(m => m.brand_id === selectedBrand.id);
+        setFilteredModels(modelsForBrand);
+      }
+    } else {
+      setFilteredModels(deviceModels);
+    }
+  }, [editForm.device_brand, deviceBrands, deviceModels]);
 
   const fetchAllPhotos = async () => {
     setLoading(true);
@@ -54,6 +86,33 @@ export default function AdminPhotosPage() {
       console.error('Erreur lors du chargement des photos:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchDeviceData = async () => {
+    try {
+      // Récupérer les types d'appareils
+      const typesRes = await fetch('/api/devices/types');
+      if (typesRes.ok) {
+        const typesData = await typesRes.json();
+        setDeviceTypes(typesData);
+      }
+
+      // Récupérer les marques
+      const brandsRes = await fetch('/api/devices/brands');
+      if (brandsRes.ok) {
+        const brandsData = await brandsRes.json();
+        setDeviceBrands(brandsData);
+      }
+
+      // Récupérer les modèles
+      const modelsRes = await fetch('/api/devices/models');
+      if (modelsRes.ok) {
+        const modelsData = await modelsRes.json();
+        setDeviceModels(modelsData);
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des données appareils:', error);
     }
   };
 
@@ -398,13 +457,25 @@ export default function AdminPhotosPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Type d'appareil *
                   </label>
-                  <input
-                    type="text"
+                  <select
                     value={editForm.device_type}
-                    onChange={(e) => setEditForm({ ...editForm, device_type: e.target.value })}
-                    placeholder="Ex: iPhone 12 Pro, Samsung Galaxy S21"
+                    onChange={(e) => {
+                      setEditForm({ 
+                        ...editForm, 
+                        device_type: e.target.value,
+                        device_brand: '', // Reset brand when type changes
+                        device_model: ''  // Reset model when type changes
+                      });
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+                  >
+                    <option value="">-- Sélectionnez un type --</option>
+                    {deviceTypes.map((type) => (
+                      <option key={type.id} value={type.name}>
+                        {type.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -412,26 +483,54 @@ export default function AdminPhotosPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Marque
                     </label>
-                    <input
-                      type="text"
+                    <select
                       value={editForm.device_brand}
-                      onChange={(e) => setEditForm({ ...editForm, device_brand: e.target.value })}
-                      placeholder="Ex: Apple, Samsung"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
+                      onChange={(e) => {
+                        setEditForm({ 
+                          ...editForm, 
+                          device_brand: e.target.value,
+                          device_model: '' // Reset model when brand changes
+                        });
+                      }}
+                      disabled={!editForm.device_type}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    >
+                      <option value="">-- Sélectionnez une marque --</option>
+                      {filteredBrands.map((brand) => (
+                        <option key={brand.id} value={brand.name}>
+                          {brand.name}
+                        </option>
+                      ))}
+                    </select>
+                    {!editForm.device_type && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Sélectionnez d'abord un type
+                      </p>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Modèle
                     </label>
-                    <input
-                      type="text"
+                    <select
                       value={editForm.device_model}
                       onChange={(e) => setEditForm({ ...editForm, device_model: e.target.value })}
-                      placeholder="Ex: iPhone 12 Pro, Galaxy S21"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
+                      disabled={!editForm.device_brand}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    >
+                      <option value="">-- Sélectionnez un modèle --</option>
+                      {filteredModels.map((model) => (
+                        <option key={model.id} value={model.name}>
+                          {model.name}
+                        </option>
+                      ))}
+                    </select>
+                    {!editForm.device_brand && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Sélectionnez d'abord une marque
+                      </p>
+                    )}
                   </div>
                 </div>
 
