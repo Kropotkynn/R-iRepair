@@ -55,6 +55,9 @@ services:
       NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-R iRepair}
       NEXT_PUBLIC_APP_VERSION: "1.0.0"
       
+    volumes:
+      # Mount uploads directory to persist uploaded images
+      - ./frontend/public/uploads:/app/public/uploads
     ports:
       - "3000:3000"
     networks:
