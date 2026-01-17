@@ -419,7 +419,7 @@ export default function BookingForm({ prefilledData, onSubmit }: BookingFormProp
             </div>
           </div>
 
-          <div>
+          { /* <div>
             <label htmlFor="urgency" className="block text-sm font-medium text-gray-700 mb-2">
               Urgence
             </label>
@@ -435,7 +435,7 @@ export default function BookingForm({ prefilledData, onSubmit }: BookingFormProp
             <p className="text-sm text-gray-500 mt-1">
               Service urgent: prise en charge prioritaire sous 24h
             </p>
-          </div>
+          </div> */}
         </div>
 
         {/* Description du problème */}

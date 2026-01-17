@@ -51,7 +51,7 @@ export default function Footer() {
                 aria-label="Google"
               >
                 <div className="w-8 h-8 bg-gray-700 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors duration-300">
-                  <span className="text-sm font-bold">G</span>
+                  <span className="text-sm font-bold">t</span>
                 </div>
               </a>
             </div>
@@ -69,14 +69,14 @@ export default function Footer() {
                   Réparation Smartphones
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link 
                   href="/repair?type=laptop" 
                   className="text-gray-300 hover:text-white transition-colors duration-300"
                 >
                   Réparation Ordinateurs
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link 
                   href="/repair?type=tablet" 
@@ -84,15 +84,15 @@ export default function Footer() {
                 >
                   Réparation Tablettes
                 </Link>
-              </li>
-              <li>
+              </li>  
+              {/* <li>
                 <Link 
                   href="/repair?type=console" 
                   className="text-gray-300 hover:text-white transition-colors duration-300"
                 >
                   Réparation Consoles
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link 
                   href="#" 
@@ -187,7 +187,7 @@ export default function Footer() {
               <div className="flex items-center space-x-3">
                 <div className="text-blue-400">🕒</div>
                 <div className="text-gray-300">
-                  <p className="text-sm">Mar - Dim: 10h - 20h</p>
+                  <p className="text-sm">Mar - Dim: 9h - 21h</p>
                   <p className="text-sm">Fermé le Lundi</p>
                 </div>
               </div>
