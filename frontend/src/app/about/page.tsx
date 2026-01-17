@@ -258,7 +258,7 @@ export default function AboutPage() {
             </div>
 
             <div className="text-center">
-              <div className="text-4xl font-bold mb-2">6 mois</div>
+              <div className="text-4xl font-bold mb-2">3 mois</div>
               <p className="text-blue-100">Garantie Offerte</p>
             </div>
           </div>

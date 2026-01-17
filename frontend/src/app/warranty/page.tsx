@@ -25,7 +25,7 @@ export default function WarrantyPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 text-white mb-12">
             <div className="text-center">
-              <div className="text-6xl font-bold mb-4">6 MOIS</div>
+              <div className="text-6xl font-bold mb-4">3 MOIS</div>
               <h2 className="text-2xl font-semibold mb-4">Garantie Standard</h2>
               <p className="text-lg text-blue-100">
                 Sur toutes nos réparations, pièces et main d'œuvre incluses
@@ -51,7 +51,6 @@ export default function WarrantyPage() {
               <ul className="text-gray-600 space-y-2">
                 <li>• Échange sous 24h si défaut</li>
                 <li>• Pièce de remplacement gratuite</li>
-                <li>• Nouvelle garantie de 6 mois</li>
                 <li>• Priorité sur notre planning</li>
               </ul>
             </div>
@@ -107,7 +106,7 @@ export default function WarrantyPage() {
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-500 mr-2 mt-1">•</span>
-                  <span>Panne identique dans les 6 mois</span>
+                  <span>Panne identique dans les 3 mois</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-500 mr-2 mt-1">•</span>
@@ -193,7 +192,6 @@ export default function WarrantyPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Réparation Gratuite</h3>
               <p className="text-gray-600 leading-relaxed">
                 Si c'est couvert, nous réparons gratuitement sous 24h. 
-                Une nouvelle garantie de 6 mois démarre.
               </p>
             </div>
           </div>
@@ -212,7 +210,7 @@ export default function WarrantyPage() {
             <div className="bg-white rounded-lg shadow p-6 text-center">
               <div className="text-3xl mb-3">📱</div>
               <h3 className="font-semibold text-gray-900 mb-2">Smartphones</h3>
-              <div className="text-blue-600 font-bold text-lg mb-2">6 mois</div>
+              <div className="text-blue-600 font-bold text-lg mb-2">3 mois</div>
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>• Écran et tactile</li>
                 <li>• Batterie</li>
@@ -224,7 +222,7 @@ export default function WarrantyPage() {
             <div className="bg-white rounded-lg shadow p-6 text-center">
               <div className="text-3xl mb-3">📲</div>
               <h3 className="font-semibold text-gray-900 mb-2">Tablettes</h3>
-              <div className="text-blue-600 font-bold text-lg mb-2">6 mois</div>
+              <div className="text-blue-600 font-bold text-lg mb-2">3 mois</div>
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>• Écran tactile</li>
                 <li>• Batterie</li>
