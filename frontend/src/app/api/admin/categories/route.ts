@@ -100,9 +100,16 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           );
         }
+        // Obtenir le prochain display_order pour cette marque
+        const maxOrderResult = await query(
+          'SELECT COALESCE(MAX(display_order), 0) + 1 as next_order FROM models WHERE brand_id = $1',
+          [data.brandId]
+        );
+        const nextOrder = maxOrderResult.rows[0].next_order;
+        
         result = await query(
-          'INSERT INTO models (name, brand_id, image, estimated_price, repair_time) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-          [data.name, data.brandId, data.image || null, data.estimatedPrice || null, data.repairTime || null]
+          'INSERT INTO models (name, brand_id, image, estimated_price, repair_time, display_order) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+          [data.name, data.brandId, data.image || null, data.estimatedPrice || null, data.repairTime || null, nextOrder]
         );
         message = 'Modèle ajouté avec succès';
         break;
@@ -211,6 +218,7 @@ export async function PUT(request: NextRequest) {
             { status: 400 }
           );
         }
+        // Conserver le display_order existant lors de la modification
         result = await query(
           'UPDATE models SET name = $1, brand_id = $2, image = $3, estimated_price = $4, repair_time = $5, updated_at = NOW() WHERE id = $6 RETURNING *',
           [data.name, data.brandId, data.image || null, data.estimatedPrice || null, data.repairTime || null, id]

@@ -194,6 +194,34 @@ function CategoriesContent() {
     }
   };
 
+  const handleReorderModel = async (modelId: string, direction: 'up' | 'down', brandId: string) => {
+    try {
+      const response = await fetch('/api/admin/models/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ modelId, direction, brandId }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSuccessMessage('Ordre des modèles mis à jour avec succès');
+        // Mettre à jour uniquement les modèles de cette marque
+        if (result.data) {
+          setModels(prevModels => {
+            const otherBrandModels = prevModels.filter(m => m.brandId !== brandId);
+            return [...otherBrandModels, ...result.data];
+          });
+        }
+      } else {
+        alert(`Erreur lors du réordonnancement: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Erreur lors du réordonnancement:', error);
+      alert('Erreur lors du réordonnancement');
+    }
+  };
+
   const handleLogout = async () => {
     await logout();
     router.push('/admin/login');
@@ -499,46 +527,112 @@ function CategoriesContent() {
                   </button>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {models.map((model) => (
-                    <div key={model.id} className="border border-gray-200 rounded-lg p-4">
-                      {model.image && (
-                        <img 
-                          src={model.image} 
-                          alt={model.name}
-                          className="w-full h-32 object-cover rounded-lg mb-3"
-                        />
-                      )}
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-semibold text-gray-900">{model.name}</h4>
-                        <div className="flex space-x-1">
-                          <button 
-                            onClick={() => openModal('edit', 'model', model)}
-                            className="text-blue-600 hover:text-blue-800 text-xs"
-                          >
-                            Modifier
-                          </button>
-                          <button 
-                            onClick={() => handleDelete('model', model.id, model.name)}
-                            className="text-red-600 hover:text-red-800 text-xs"
-                          >
-                            Supprimer
-                          </button>
-                        </div>
+                {/* Grouper les modèles par marque */}
+                {brands.map((brand) => {
+                  const brandModels = models
+                    .filter(m => m.brandId === brand.id)
+                    .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+                  
+                  if (brandModels.length === 0) return null;
+                  
+                  return (
+                    <div key={brand.id} className="mb-8">
+                      <div className="flex items-center mb-4 pb-2 border-b border-gray-200">
+                        <h4 className="text-lg font-semibold text-gray-900">{brand.name}</h4>
+                        <span className="ml-2 text-sm text-gray-500">({brandModels.length} modèles)</span>
                       </div>
-                      <p className="text-sm text-gray-600 mb-1">
-                        Marque: {brands.find(b => b.id === model.brandId)?.name || model.brandId}
-                      </p>
-                      {model.estimatedPrice && (
-                        <p className="text-sm text-blue-600 font-medium">{model.estimatedPrice}</p>
-                      )}
-                      {model.repairTime && (
-                        <p className="text-xs text-gray-500">Délai: {model.repairTime}</p>
-                      )}
-                      <p className="text-xs text-gray-400 mt-2 font-mono">{model.id}</p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {brandModels.map((model, index) => (
+                          <div key={model.id} className="border border-gray-200 rounded-lg p-4 relative">
+                            {/* Badge d'ordre */}
+                            <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                              {index + 1}
+                            </div>
+                            
+                            {model.image && (
+                              <img 
+                                src={model.image} 
+                                alt={model.name}
+                                className="w-full h-32 object-cover rounded-lg mb-3"
+                              />
+                            )}
+                            <div className="flex justify-between items-start mb-2">
+                              <h4 className="font-semibold text-gray-900">{model.name}</h4>
+                              <div className="flex space-x-1">
+                                <button 
+                                  onClick={() => openModal('edit', 'model', model)}
+                                  className="text-blue-600 hover:text-blue-800 text-xs"
+                                  title="Modifier"
+                                >
+                                  ✏️
+                                </button>
+                                <button 
+                                  onClick={() => handleDelete('model', model.id, model.name)}
+                                  className="text-red-600 hover:text-red-800 text-xs"
+                                  title="Supprimer"
+                                >
+                                  🗑️
+                                </button>
+                              </div>
+                            </div>
+                            
+                            {model.estimatedPrice && (
+                              <p className="text-sm text-blue-600 font-medium mb-1">{model.estimatedPrice}</p>
+                            )}
+                            {model.repairTime && (
+                              <p className="text-xs text-gray-500 mb-2">Délai: {model.repairTime}</p>
+                            )}
+                            
+                            {/* Boutons de tri */}
+                            <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                              <span className="text-xs text-gray-500">Ordre d'affichage</span>
+                              <div className="flex space-x-1">
+                                <button
+                                  onClick={() => handleReorderModel(model.id, 'up', brand.id)}
+                                  disabled={index === 0}
+                                  className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                                    index === 0
+                                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                      : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                                  }`}
+                                  title="Monter"
+                                >
+                                  ↑
+                                </button>
+                                <button
+                                  onClick={() => handleReorderModel(model.id, 'down', brand.id)}
+                                  disabled={index === brandModels.length - 1}
+                                  className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                                    index === brandModels.length - 1
+                                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                      : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                                  }`}
+                                  title="Descendre"
+                                >
+                                  ↓
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
+                
+                {models.length === 0 && (
+                  <div className="text-center py-12">
+                    <div className="text-gray-400 text-5xl mb-4">📱</div>
+                    <p className="text-gray-500">Aucun modèle enregistré</p>
+                    <button 
+                      onClick={() => openModal('add', 'model')}
+                      className="mt-4 text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    >
+                      Ajouter le premier modèle
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 

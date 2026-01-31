@@ -20,6 +20,7 @@ export interface Model {
   image?: string;
   estimatedPrice?: string;
   repairTime?: string;
+  displayOrder?: number;
 }
 
 export interface RepairService {
