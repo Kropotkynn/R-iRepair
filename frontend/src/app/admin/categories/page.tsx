@@ -222,6 +222,50 @@ function CategoriesContent() {
     }
   };
 
+  const handleReorderType = async (typeId: string, direction: 'up' | 'down') => {
+    try {
+      const response = await fetch('/api/admin/types/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ typeId, direction }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSuccessMessage('Ordre des types mis à jour avec succès');
+        await loadData();
+      } else {
+        alert(`Erreur lors du réordonnancement: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Erreur lors du réordonnancement:', error);
+      alert('Erreur lors du réordonnancement');
+    }
+  };
+
+  const handleReorderBrand = async (brandId: string, direction: 'up' | 'down') => {
+    try {
+      const response = await fetch('/api/admin/brands/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ brandId, direction }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSuccessMessage('Ordre des marques mis à jour avec succès');
+        await loadData();
+      } else {
+        alert(`Erreur lors du réordonnancement: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Erreur lors du réordonnancement:', error);
+      alert('Erreur lors du réordonnancement');
+    }
+  };
+
   const handleLogout = async () => {
     await logout();
     router.push('/admin/login');

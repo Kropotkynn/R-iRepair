@@ -4,6 +4,7 @@ export interface DeviceType {
   name: string;
   icon: string;
   description: string;
+  displayOrder?: number;
 }
 
 export interface Brand {
@@ -11,6 +12,7 @@ export interface Brand {
   name: string;
   deviceTypeId: string;
   logo?: string;
+  displayOrder?: number;
 }
 
 export interface Model {
