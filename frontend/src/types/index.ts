@@ -4,7 +4,6 @@ export interface DeviceType {
   name: string;
   icon: string;
   description: string;
-  display_order?: number;
 }
 
 export interface Brand {
@@ -12,7 +11,6 @@ export interface Brand {
   name: string;
   deviceTypeId: string;
   logo?: string;
-  display_order?: number;
 }
 
 export interface Model {
@@ -22,7 +20,6 @@ export interface Model {
   image?: string;
   estimatedPrice?: string;
   repairTime?: string;
-  display_order?: number;
 }
 
 export interface RepairService {
