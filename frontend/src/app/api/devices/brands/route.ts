@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
         b.name,
         b.device_type_id,
         b.logo,
+        b.display_order,
         b.created_at,
         b.updated_at,
         dt.name as device_type_name,
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
       params.push(deviceTypeId);
     }
 
-    sql += ` ORDER BY b.name ASC`;
+    sql += ` ORDER BY b.display_order ASC, b.name ASC`;
 
     const result = await query(sql, params);
 

@@ -10,10 +10,11 @@ export async function GET(request: NextRequest) {
         name,
         icon,
         description,
+        display_order,
         created_at,
         updated_at
       FROM device_types
-      ORDER BY name ASC
+      ORDER BY display_order ASC, name ASC
     `);
 
     return NextResponse.json({

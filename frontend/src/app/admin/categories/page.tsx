@@ -194,6 +194,68 @@ function CategoriesContent() {
     }
   };
 
+  const reorderItems = async (type: 'deviceType' | 'brand' | 'model', items: any[]) => {
+    try {
+      const reorderData = items.map((item, index) => ({
+        id: item.id,
+        display_order: index
+      }));
+
+      const response = await fetch('/api/admin/categories/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type,
+          items: reorderData
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadData();
+      } else {
+        alert(`Erreur: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Erreur lors du réordonnancement:', error);
+      alert('Erreur lors du réordonnancement');
+    }
+  };
+
+  const moveUp = (type: 'deviceType' | 'brand' | 'model', itemId: string, currentIndex: number) => {
+    if (currentIndex === 0) return;
+
+    let items: any[] = [];
+    if (type === 'deviceType') items = [...deviceTypes];
+    else if (type === 'brand') items = [...brands];
+    else if (type === 'model') items = [...models];
+
+    [items[currentIndex - 1], items[currentIndex]] = [items[currentIndex], items[currentIndex - 1]];
+    
+    if (type === 'deviceType') setDeviceTypes(items);
+    else if (type === 'brand') setBrands(items);
+    else if (type === 'model') setModels(items);
+
+    reorderItems(type, items);
+  };
+
+  const moveDown = (type: 'deviceType' | 'brand' | 'model', itemId: string, currentIndex: number, total: number) => {
+    if (currentIndex === total - 1) return;
+
+    let items: any[] = [];
+    if (type === 'deviceType') items = [...deviceTypes];
+    else if (type === 'brand') items = [...brands];
+    else if (type === 'model') items = [...models];
+
+    [items[currentIndex], items[currentIndex + 1]] = [items[currentIndex + 1], items[currentIndex]];
+    
+    if (type === 'deviceType') setDeviceTypes(items);
+    else if (type === 'brand') setBrands(items);
+    else if (type === 'model') setModels(items);
+
+    reorderItems(type, items);
+  };
+
   const handleLogout = async () => {
     await logout();
     router.push('/admin/login');
@@ -346,11 +408,27 @@ function CategoriesContent() {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {deviceTypes.map((device) => (
+                  {deviceTypes.map((device, index) => (
                     <div key={device.id} className="border border-gray-200 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-3">
                         <div className="text-2xl">{device.icon}</div>
                         <div className="flex space-x-2">
+                          <button 
+                            onClick={() => moveUp('deviceType', device.id, index)}
+                            disabled={index === 0}
+                            className="text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                            title="Monter"
+                          >
+                            ↑
+                          </button>
+                          <button 
+                            onClick={() => moveDown('deviceType', device.id, index, deviceTypes.length)}
+                            disabled={index === deviceTypes.length - 1}
+                            className="text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                            title="Descendre"
+                          >
+                            ↓
+                          </button>
                           <button 
                             onClick={() => openModal('edit', 'deviceType', device)}
                             className="text-blue-600 hover:text-blue-800 text-sm"
@@ -395,11 +473,12 @@ function CategoriesContent() {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type d'Appareil</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ordre</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {brands.map((brand: any) => {
+                      {brands.map((brand: any, index: number) => {
                         // L'API retourne device_type_name et device_type_icon directement
                         const hasValidDeviceType = brand.device_type_name && brand.device_type_icon;
                         
@@ -448,6 +527,26 @@ function CategoriesContent() {
                               <span className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded">
                                 {brand.id.substring(0, 8)}...
                               </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center space-x-1">
+                                <button 
+                                  onClick={() => moveUp('brand', brand.id, index)}
+                                  disabled={index === 0}
+                                  className="text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                                  title="Monter"
+                                >
+                                  ↑
+                                </button>
+                                <button 
+                                  onClick={() => moveDown('brand', brand.id, index, brands.length)}
+                                  disabled={index === brands.length - 1}
+                                  className="text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                                  title="Descendre"
+                                >
+                                  ↓
+                                </button>
+                              </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                               <button 
@@ -500,7 +599,7 @@ function CategoriesContent() {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {models.map((model) => (
+                  {models.map((model, index) => (
                     <div key={model.id} className="border border-gray-200 rounded-lg p-4">
                       {model.image && (
                         <img 
@@ -512,6 +611,22 @@ function CategoriesContent() {
                       <div className="flex justify-between items-start mb-2">
                         <h4 className="font-semibold text-gray-900">{model.name}</h4>
                         <div className="flex space-x-1">
+                          <button 
+                            onClick={() => moveUp('model', model.id, index)}
+                            disabled={index === 0}
+                            className="text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+                            title="Monter"
+                          >
+                            ↑
+                          </button>
+                          <button 
+                            onClick={() => moveDown('model', model.id, index, models.length)}
+                            disabled={index === models.length - 1}
+                            className="text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+                            title="Descendre"
+                          >
+                            ↓
+                          </button>
                           <button 
                             onClick={() => openModal('edit', 'model', model)}
                             className="text-blue-600 hover:text-blue-800 text-xs"
